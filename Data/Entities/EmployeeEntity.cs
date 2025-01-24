@@ -11,7 +11,7 @@ public class EmployeeEntity
     public string FirstName { get; set; } = null!;
     
     [Required] [MaxLength(50)]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = null!;
 
     [Required] [MaxLength(100)]
     public string Email { get; set; } = null!;
@@ -22,5 +22,5 @@ public class EmployeeEntity
     public int RoleId { get; set; }
     public RoleEntity Role { get; set; } = null!;
     
-    // public ICollection<ProjectEntity> Projects { get; set; } = new List<ProjectEntity>();
+    public ICollection<ProjectEntity> Projects { get; set; } = new List<ProjectEntity>();
 }
