@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Entities;
 
@@ -9,7 +10,7 @@ public class ServiceInfoEntity
     [Required] [StringLength(100)]
     public string ServiceName { get; set; } = null!;
 
-    [Required]
+    [Required] [Precision(18, 2)]
     public decimal Price { get; set; }
     
     public ICollection<ProjectEntity> Projects { get; set; } = new List<ProjectEntity>();
