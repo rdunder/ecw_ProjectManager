@@ -25,7 +25,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateAsync(CustomerDto dto)
+    public Task<bool> UpdateAsync(Customer model)
     {
         throw new NotImplementedException();
     }

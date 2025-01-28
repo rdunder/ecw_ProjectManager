@@ -1,5 +1,6 @@
-using Data.Entities;
+
 using Data.Interfaces;
+using Service.Interfaces;
 
 namespace Ui.Cli.Main;
 
@@ -11,7 +12,9 @@ public class TestService
     IProjectRepository projectRepository,
     IRoleRepository roleRepository,
     IServiceInfoRepository serviceInfoRepository,
-    IStatusInfoRepository statusInfoRepository
+    IStatusInfoRepository statusInfoRepository,
+    
+    IEmployeeService employeeService
 )
 
 {
@@ -22,31 +25,18 @@ public class TestService
     private readonly IRoleRepository _roleRepository = roleRepository;
     private readonly IServiceInfoRepository _serviceInfoRepository = serviceInfoRepository;
     private readonly IStatusInfoRepository _statusInfoRepository = statusInfoRepository;
+    
+    private readonly IEmployeeService _employeeService = employeeService;
 
     
     public async Task DisplayAllData()
     {
-        var customers = await _customerRepository.GetAllCustomersIncludingContactPersonAsync();
-        var employees = await _employeeRepository.GetAllAsync();
-        var services = await _serviceInfoRepository.GetAllAsync();
-        var statuses = await _statusInfoRepository.GetAllAsync();
-
-        foreach (var customer in customers)
-        {
-            Console.WriteLine(@$"
-Customer: {customer.CompanyName} <{customer.Email}>
-ContactPerson: {customer.ContactPerson.FirstName} {customer.ContactPerson.LastName}
-<{customer.ContactPerson.Email}>
-{customer.ContactPerson.PhoneNumber}
-
-");
-        }
-
+        var employees = await _employeeService.GetEmployeesIncludingRoleAsync();
         foreach (var employee in employees)
         {
-            var role = await _roleRepository.GetAsync(x => x.Id == employee.RoleId);
             Console.WriteLine(employee.FirstName);
-            Console.WriteLine(role.RoleName);
+            Console.WriteLine(employee.Role.RoleName);
+            Console.WriteLine("\n");
         }
     }
 }

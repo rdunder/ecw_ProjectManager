@@ -21,7 +21,7 @@ public class ContactPersonService : IContactPersonService
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateAsync(ContactPersonDto dto)
+    public Task<bool> UpdateAsync(ContactPerson model)
     {
         throw new NotImplementedException();
     }

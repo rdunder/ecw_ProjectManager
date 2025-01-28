@@ -1,33 +1,94 @@
+using Data.Interfaces;
 using Service.Dtos;
+using Service.Factories;
 using Service.Interfaces;
 using Service.Models;
 
 namespace Service.Services;
 
-public class StatusInfoService : IStatusInfoService
+public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : IStatusInfoService
 {
-    public Task<bool> CreateAsync(StatusInfoDto dto)
+    private readonly IStatusInfoRepository _statusInfoRepository = statusInfoRepository;
+    
+    
+    
+    public async Task<bool> CreateAsync(StatusInfoDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null || await _statusInfoRepository.AlreadyExistsAsync(x => x.StatusName == dto.StatusName))
+            return false;
+        
+        try
+        {
+            var entity = StatusInfoFactory.Create(dto);
+            await _statusInfoRepository.CreateAsync(entity);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when creating StatusInfo: {e.Message}");
+            return false;
+        }
     }
 
-    public Task<IEnumerable<StatusInfo>> GetAllAsync()
+    public async Task<IEnumerable<StatusInfo>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var statuses = new List<StatusInfo>();
+        
+        try
+        {
+            var entities = await _statusInfoRepository.GetAllAsync();
+            statuses.AddRange(entities.Select(entity => StatusInfoFactory.Create(entity)));
+            return statuses;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when getting all Statuses: {e.Message}");
+            return [];
+        }
     }
 
-    public Task<StatusInfo> GetByIdAsync(int id)
+    public async Task<StatusInfo> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var entity = await _statusInfoRepository.GetAsync(x => x.Id == id);
+            return StatusInfoFactory.Create(entity);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when getting Status: {e.Message}");
+            return null!;
+        }
     }
 
-    public Task<bool> UpdateAsync(StatusInfoDto dto)
+    public async Task<bool> UpdateAsync(StatusInfo? model)
     {
-        throw new NotImplementedException();
+        if (model is null) return false;
+
+        try
+        {
+            var entity = StatusInfoFactory.Create(model);
+            await _statusInfoRepository.UpdateAsync( (x => x.Id == model.Id), entity);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"there was error when updating The Status: {e.Message}");
+            return false;
+        }
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var result = await _statusInfoRepository.DeleteAsync(x => x.Id == id);
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"there was error when deleting Status: {e.Message}");
+            return false;
+        }
     }
 }

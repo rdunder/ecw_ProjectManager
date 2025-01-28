@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Service.Interfaces;
+using Service.Services;
 using Ui.Cli.Main;
 
 internal class Program
@@ -31,6 +33,8 @@ internal class Program
                 services.AddScoped<IRoleRepository, RoleRepository>();
                 services.AddScoped<IServiceInfoRepository, ServiceInfoRepository>();
                 services.AddScoped<IStatusInfoRepository, StatusInfoRepository>();
+
+                services.AddScoped<IEmployeeService, EmployeeService>();
 
                 services.AddScoped<TestService>();
 

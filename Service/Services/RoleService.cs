@@ -1,33 +1,95 @@
+using System.Linq.Expressions;
+using Data.Interfaces;
 using Service.Dtos;
+using Service.Factories;
 using Service.Interfaces;
 using Service.Models;
 
 namespace Service.Services;
 
-public class RoleService : IRoleService
+public class RoleService(IRoleRepository roleRepository) : IRoleService
 {
-    public Task<bool> CreateAsync(RoleDto dto)
+    private readonly IRoleRepository _roleRepository = roleRepository;
+    
+    
+    
+    public async Task<bool> CreateAsync(RoleDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null || await _roleRepository.AlreadyExistsAsync(x => x.RoleName == dto.RoleName))
+            return false;
+        
+        try
+        {
+            var entity = RoleFactory.Create(dto);
+            await _roleRepository.CreateAsync(entity);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when creating role: {e.Message}");
+            return false;
+        }
     }
 
-    public Task<IEnumerable<Role>> GetAllAsync()
+    public async Task<IEnumerable<Role>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var roles = new List<Role>();
+        
+        try
+        {
+            var entities = await _roleRepository.GetAllAsync();
+            roles.AddRange(entities.Select(entity => RoleFactory.Create(entity)));
+            return roles;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when getting all roles: {e.Message}");
+            return [];
+        }
     }
 
-    public Task<Role> GetByIdAsync(int id)
+    public async Task<Role> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var entity = await _roleRepository.GetAsync(x => x.Id == id);
+            return RoleFactory.Create(entity);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"There was error when getting role: {e.Message}");
+            return null!;
+        }
     }
 
-    public Task<bool> UpdateAsync(RoleDto dto)
+    public async Task<bool> UpdateAsync(Role? role)
     {
-        throw new NotImplementedException();
+        if (role is null) return false;
+
+        try
+        {
+            var entity = RoleFactory.Create(role);
+            await _roleRepository.UpdateAsync( (x => x.Id == role.Id), entity);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"there was error when updating role: {e.Message}");
+            return false;
+        }
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var result = await _roleRepository.DeleteAsync(x => x.Id == id);
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"there was error when deleting role: {e.Message}");
+            return false;
+        }
     }
 }

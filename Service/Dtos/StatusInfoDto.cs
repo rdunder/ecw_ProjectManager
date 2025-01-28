@@ -6,5 +6,5 @@ namespace Service.Dtos;
 public class StatusInfoDto
 {
     [Required] [MaxLength(50)] 
-    public string StatusName { get; set; }
+    public string StatusName { get; set; } = null!;
 }
