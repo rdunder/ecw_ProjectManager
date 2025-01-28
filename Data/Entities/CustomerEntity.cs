@@ -11,6 +11,8 @@ public class CustomerEntity
     
     [EmailAddress] [MaxLength(100)]
     public string Email { get; set; } = null!;
+    
+    
 
     public ContactPersonEntity? ContactPerson { get; set; }
     

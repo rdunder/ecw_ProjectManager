@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Data.Entities;
 
-namespace Data.Entities;
+namespace Service.Dtos;
 
-public class EmployeeEntity
+public class EmployeeDto
 {
-    [Key]
-    public int EmploymentNumber { get; set; }
-
     [Required] [MaxLength(50)] 
     public string FirstName { get; set; } = null!;
     
@@ -18,11 +16,6 @@ public class EmployeeEntity
     
     [Required] [MaxLength(25)]
     public string PhoneNumber { get; set; } = null!;
-    
-    
 
     public int RoleId { get; set; }
-    public RoleEntity Role { get; set; } = null!;
-    
-    public ICollection<ProjectEntity> Projects { get; set; } = new List<ProjectEntity>();
 }

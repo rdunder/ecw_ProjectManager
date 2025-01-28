@@ -32,23 +32,14 @@ internal class Program
                 services.AddScoped<IServiceInfoRepository, ServiceInfoRepository>();
                 services.AddScoped<IStatusInfoRepository, StatusInfoRepository>();
 
-                services.AddScoped<ProjectTestService>();
+                services.AddScoped<TestService>();
 
             })
             .Build();
         
-        var testService = host.Services.GetService<ProjectTestService>();
-
-        bool isSuccess = await testService.AddTestProjectAsync();
-        
-        if (isSuccess)
-        {
-            Console.WriteLine("Successfully added test project");
-        }
-        else
-        {
-            Console.WriteLine("Failed to add test project");
-        }
+        var testService = host.Services.GetService<TestService>();
+        await testService.DisplayAllData();
+        Console.WriteLine("done");
     }
 }
     

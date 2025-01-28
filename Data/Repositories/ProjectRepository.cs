@@ -14,7 +14,7 @@ public class ProjectRepository(SqlDataContext context) :
     
     
     
-    public async Task<IEnumerable<ProjectEntity>> GetAllProjectsAndIncludesAsync()
+    public async Task<IEnumerable<ProjectEntity>> GetAllProjectsIncludingAllPropertiesAsync()
     {
         try
         {
@@ -29,7 +29,7 @@ public class ProjectRepository(SqlDataContext context) :
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw;
+            return null!;
         }
     }
 }
