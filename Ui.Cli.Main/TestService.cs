@@ -1,6 +1,8 @@
 
 using Data.Interfaces;
+using Service.Helpers;
 using Service.Interfaces;
+using Service.Models;
 
 namespace Ui.Cli.Main;
 
@@ -14,7 +16,10 @@ public class TestService
     IServiceInfoRepository serviceInfoRepository,
     IStatusInfoRepository statusInfoRepository,
     
-    IEmployeeService employeeService
+    IEmployeeService employeeService,
+    IStatusInfoService statusInfoService,
+    IServiceInfoService serviceInfoService,
+    IRoleService roleService
 )
 
 {
@@ -27,16 +32,24 @@ public class TestService
     private readonly IStatusInfoRepository _statusInfoRepository = statusInfoRepository;
     
     private readonly IEmployeeService _employeeService = employeeService;
+    private readonly IStatusInfoService _statusInfoService = statusInfoService;
+    private readonly IServiceInfoService _serviceInfoService = serviceInfoService;
+    private readonly IRoleService _roleService = roleService;
+    
 
     
     public async Task DisplayAllData()
     {
-        var employees = await _employeeService.GetEmployeesIncludingRoleAsync();
-        foreach (var employee in employees)
+        var result = await _employeeService.GetEmployeesIncludingRoleAsync();
+        if (result.Success && result.Data != null)
         {
-            Console.WriteLine(employee.FirstName);
-            Console.WriteLine(employee.Role.RoleName);
-            Console.WriteLine("\n");
+            IEnumerable<Employee> emp = result.Data;
+            foreach (var employee in emp)
+            {
+                Console.WriteLine($"{employee.Role.RoleName}");
+                Console.WriteLine($"{employee.FirstName} {employee.LastName} - <{employee.Email}>\n");
+            }
+            
         }
     }
 }

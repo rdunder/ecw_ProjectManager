@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Data.Interfaces;
 using Service.Dtos;
 using Service.Factories;
+using Service.Helpers;
 using Service.Interfaces;
 using Service.Models;
 
@@ -10,28 +11,30 @@ namespace Service.Services;
 public class RoleService(IRoleRepository roleRepository) : IRoleService
 {
     private readonly IRoleRepository _roleRepository = roleRepository;
+
     
     
-    
-    public async Task<bool> CreateAsync(RoleDto? dto)
+    public async Task<IResult> CreateAsync(RoleDto? dto)
     {
-        if (dto is null || await _roleRepository.AlreadyExistsAsync(x => x.RoleName == dto.RoleName))
-            return false;
+        if (dto is null)
+            return Result.BadRequest("RoleDto is null");
+                
+        if (await _roleRepository.AlreadyExistsAsync(x => x.RoleName == dto.RoleName))
+            return Result.AlreadyExists("Role already exists");
         
         try
         {
             var entity = RoleFactory.Create(dto);
             await _roleRepository.CreateAsync(entity);
-            return true;
+            return Result.Ok();
         }
         catch (Exception e)
         {
-            Console.WriteLine($"There was error when creating role: {e.Message}");
-            return false;
+            return Result.ExceptionError($"There was an error when creating role :: {e.Message}");
         }
     }
 
-    public async Task<IEnumerable<Role>> GetAllAsync()
+    public async Task<IResult<IEnumerable<Role>>> GetAllAsync()
     {
         var roles = new List<Role>();
         
@@ -39,57 +42,58 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         {
             var entities = await _roleRepository.GetAllAsync();
             roles.AddRange(entities.Select(entity => RoleFactory.Create(entity)));
-            return roles;
+            //return Result<IEnumerable<Role>>.Ok(roles);
+            return Result<IEnumerable<Role>>.Ok(roles);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"There was error when getting all roles: {e.Message}");
-            return [];
+            return Result<IEnumerable<Role>>.ExceptionError($"There was error when getting all roles: {e.Message}");
         }
     }
 
-    public async Task<Role> GetByIdAsync(int id)
+    public async Task<IResult<Role>> GetByIdAsync(int id)
     {
         try
         {
             var entity = await _roleRepository.GetAsync(x => x.Id == id);
-            return RoleFactory.Create(entity);
+            return Result<Role>.Ok(RoleFactory.Create(entity));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"There was error when getting role: {e.Message}");
-            return null!;
+            return Result<Role>.ExceptionError($"There was error when getting role: {e.Message}");
         }
     }
 
-    public async Task<bool> UpdateAsync(Role? role)
+    public async Task<IResult> UpdateAsync(Role? role)
     {
-        if (role is null) return false;
+        if (role is null) 
+            return Result.BadRequest("Role is null");
 
         try
         {
             var entity = RoleFactory.Create(role);
             await _roleRepository.UpdateAsync( (x => x.Id == role.Id), entity);
-            return true;
+            return Result.Ok();
         }
         catch (Exception e)
         {
-            Console.WriteLine($"there was error when updating role: {e.Message}");
-            return false;
+            return Result.ExceptionError($"There was an error when updating role: {e.Message}");
         }
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<IResult> DeleteAsync(int id)
     {
+        if (await _roleRepository.AlreadyExistsAsync(x => x.Id == id) == false)
+            return Result.BadRequest("Role Id Does Not Exists");
+            
         try
         {
             var result = await _roleRepository.DeleteAsync(x => x.Id == id);
-            return result;
+            return Result.Ok();
         }
         catch (Exception e)
         {
-            Console.WriteLine($"there was error when deleting role: {e.Message}");
-            return false;
+            return Result.ExceptionError($"There was an error when deleting role: {e.Message}");
         }
     }
 }

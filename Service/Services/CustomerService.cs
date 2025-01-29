@@ -10,27 +10,27 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
     ICustomerRepository _customerRepository = customerRepository;
     
     
-    public Task<bool> CreateAsync(CustomerDto dto)
+    public Task<IResult> CreateAsync(CustomerDto dto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Customer>> GetAllAsync()
+    public Task<IResult<IEnumerable<Customer>>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Customer> GetByIdAsync(int id)
+    public Task<IResult<Customer>> GetByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateAsync(Customer model)
+    public Task<IResult> UpdateAsync(Customer model)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public Task<IResult> DeleteAsync(int id)
     {
         throw new NotImplementedException();
     }

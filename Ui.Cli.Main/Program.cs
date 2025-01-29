@@ -33,9 +33,13 @@ internal class Program
                 services.AddScoped<IRoleRepository, RoleRepository>();
                 services.AddScoped<IServiceInfoRepository, ServiceInfoRepository>();
                 services.AddScoped<IStatusInfoRepository, StatusInfoRepository>();
-
+                
+                
                 services.AddScoped<IEmployeeService, EmployeeService>();
-
+                services.AddScoped<IRoleService, RoleService>();
+                services.AddScoped<IServiceInfoService, ServiceInfoService>();
+                services.AddScoped<IStatusInfoService, StatusInfoService>();
+                
                 services.AddScoped<TestService>();
 
             })

@@ -12,27 +12,27 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
     private IProjectRepository _repository = projectRepository;
     
     
-    public Task<bool> CreateAsync(ProjectDto dto)
+    public Task<IResult> CreateAsync(ProjectDto dto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Project>> GetAllAsync()
+    public Task<IResult<IEnumerable<Project>>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Project> GetByIdAsync(int id)
+    public Task<IResult<Project>> GetByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateAsync(Project model)
+    public Task<IResult> UpdateAsync(Project model)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public Task<IResult> DeleteAsync(int id)
     {
         throw new NotImplementedException();
     }
