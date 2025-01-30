@@ -7,4 +7,5 @@ namespace Service.Interfaces;
 public interface IEmployeeService : IService<Employee, EmployeeDto>
 {
     public Task<IResult< IEnumerable<Employee> >> GetEmployeesIncludingRoleAsync();
+    public Task<IResult<Employee>> GetEmployeeByIdIncludingRoleAsync(int id);
 }

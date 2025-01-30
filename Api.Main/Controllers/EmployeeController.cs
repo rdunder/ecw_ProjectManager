@@ -20,7 +20,7 @@ namespace Api.Main.Controllers
         [HttpGet("{id}")]
         public async Task<IResult<Employee>> Get(int id)
         {
-            var result = await employeeService.GetByIdAsync(id);
+            var result = await employeeService.GetEmployeeByIdIncludingRoleAsync(id);
             return result;
         }
 

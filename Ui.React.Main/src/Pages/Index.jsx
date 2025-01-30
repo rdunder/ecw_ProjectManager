@@ -7,7 +7,7 @@ export const Index = () => {
 
     useEffect( () =>
     {
-        fetch("https://localhost:7247/api/projects")
+        fetch("http://localhost:5273/api/projects")
         .then( res => {
             return res.json();
         })

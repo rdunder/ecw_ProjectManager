@@ -13,7 +13,7 @@ namespace Api.Main.Controllers
         [HttpGet]
         public async Task<IResult<IEnumerable<Customer>>> Get()
         {
-            var result = await customerService.GetAllAsync();
+            var result = await customerService.GetAllCustomersIncludingContactPersonAsync();
             return result;
         }
 

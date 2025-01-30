@@ -72,6 +72,21 @@ public class EmployeeService(
         
     }
 
+    public async Task<IResult<Employee>> GetEmployeeByIdIncludingRoleAsync(int id)
+    {
+        try
+        {
+            var entity = await _employeeRepository.GetEmployeeByIdIncludingRoleAsync(id);
+            var employee = EmployeeFactory.Create(entity);
+            
+            return Result<Employee>.Ok(employee);
+        }
+        catch (Exception e)
+        {
+            return Result<Employee>.ExceptionError($"There was an error getting Employee with id: {e.Message}");
+        }
+    }
+
     public async Task<IResult<Employee>> GetByIdAsync(int id)
     {
         try
