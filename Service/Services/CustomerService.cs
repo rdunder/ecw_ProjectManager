@@ -1,5 +1,7 @@
 using Data.Interfaces;
 using Service.Dtos;
+using Service.Factories;
+using Service.Helpers;
 using Service.Interfaces;
 using Service.Models;
 
@@ -10,28 +12,104 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
     ICustomerRepository _customerRepository = customerRepository;
     
     
-    public Task<IResult> CreateAsync(CustomerDto dto)
+    public async Task<IResult> CreateAsync(CustomerDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null)
+            return Result.BadRequest("Customer Dto is null");
+
+        if (await _customerRepository.AlreadyExistsAsync(x => x.Email == dto.Email))
+            return Result.AlreadyExists($"Customer with email {dto.Email} already exists");
+
+        try
+        {
+            var entity = CustomerFactory.Create(dto);
+            await _customerRepository.CreateAsync(entity);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"An error occured creating Customer: {e.Message}");
+        }
     }
 
-    public Task<IResult<IEnumerable<Customer>>> GetAllAsync()
+    public async Task<IResult<IEnumerable<Customer>>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var customers = new List<Customer>();
+        
+        try
+        {
+            var entities = await _customerRepository.GetAllAsync();
+            customers.AddRange(entities.Select(entity => CustomerFactory.Create(entity)));
+            return Result<IEnumerable<Customer>>.Ok(customers);
+        }
+        catch (Exception e)
+        {
+            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+        }
     }
 
-    public Task<IResult<Customer>> GetByIdAsync(int id)
+    public async Task<IResult<IEnumerable<Customer>>> GetAllCustomersIncludingContactPersonAsync()
     {
-        throw new NotImplementedException();
+        var customers = new List<Customer>();
+        
+        try
+        {
+            var entities = await _customerRepository.GetAllCustomersIncludingContactPersonAsync();
+            customers.AddRange(entities.Select(entity => CustomerFactory.Create(entity)));
+            return Result<IEnumerable<Customer>>.Ok(customers);
+        }
+        catch (Exception e)
+        {
+            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+        }   
     }
 
-    public Task<IResult> UpdateAsync(int id, CustomerDto? dto)
+    public async Task<IResult<Customer>> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var entity = await _customerRepository.GetAsync(x => x.Id == id);
+            return Result<Customer>.Ok(CustomerFactory.Create(entity));
+        }
+        catch (Exception e)
+        {
+            return Result<Customer>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
+        }
     }
 
-    public Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> UpdateAsync(int id, CustomerDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null)
+            return Result.BadRequest("Customer Dto is null");
+                
+        if (await _customerRepository.AlreadyExistsAsync(x => x.Id == id) == false)
+            return Result.AlreadyExists($"Customer with id {id} does not exist");
+
+        try
+        {
+            var entity = CustomerFactory.Create(dto);
+            await _customerRepository.UpdateAsync( (x => x.Id == id), entity);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"There was an error updating Customer: {e.Message}");
+        }
+    }
+
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        if (await _customerRepository.AlreadyExistsAsync(x => x.Id == id) == false)
+            return Result.BadRequest($"Customer with id {id} does not exist");
+        
+        try
+        { 
+            await _customerRepository.DeleteAsync(x => x.Id == id);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"There was an error deleting Customer: {e.Message}");
+        }
     }
 }

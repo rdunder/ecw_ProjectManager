@@ -2,38 +2,133 @@ using Data.Contexts;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Service.Dtos;
+using Service.Factories;
+using Service.Helpers;
 using Service.Interfaces;
 using Service.Models;
 
 namespace Service.Services;
 
-public class ProjectService(IProjectRepository projectRepository) : IProjectService
+public class ProjectService(
+    IProjectRepository projectProjectRepository,
+    IStatusInfoRepository statusInfoRepository,
+    ICustomerRepository customerRepository,
+    IServiceInfoRepository serviceInfoRepository,
+    IEmployeeRepository employeeRepository) : IProjectService
 {
-    private IProjectRepository _repository = projectRepository;
+    private readonly IProjectRepository _projectRepository = projectProjectRepository;
+    private readonly IStatusInfoRepository _statusInfoRepository = statusInfoRepository;
+    private readonly ICustomerRepository _customerRepository = customerRepository;
+    private readonly IServiceInfoRepository _serviceInfoRepository = serviceInfoRepository;
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     
     
-    public Task<IResult> CreateAsync(ProjectDto dto)
+    public async Task<IResult> CreateAsync(ProjectDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null)
+            return Result.BadRequest("Project Dto is null");
+        
+        if (await _statusInfoRepository.AlreadyExistsAsync(x => x.Id == dto.StatusId) == false)
+            return Result.BadRequest("Status is not available");
+        if (await _serviceInfoRepository.AlreadyExistsAsync(x => x.Id == dto.ServiceId) == false)
+            return Result.BadRequest("Service is not available");
+        if (await _customerRepository.AlreadyExistsAsync(x => x.Id == dto.CustomerId) == false)
+            return Result.BadRequest("Customer is not available");
+        if (await _employeeRepository.AlreadyExistsAsync(x => x.EmploymentNumber == dto.ProjectManagerId) == false)
+            return Result.BadRequest("Employee (Project Manager) is not available");
+
+
+        try
+        {
+            var entity = ProjectFactory.Create(dto);
+            await _projectRepository.CreateAsync(entity);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"An error occured creating Project: {e.Message}");
+        }
     }
 
-    public Task<IResult<IEnumerable<Project>>> GetAllAsync()
+    public async Task<IResult<IEnumerable<Project>>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var projects = new List<Project>();
+        
+        try
+        {
+            var entities = await _projectRepository.GetAllAsync();
+            projects.AddRange(entities.Select(entity => ProjectFactory.Create(entity)));
+            return Result<IEnumerable<Project>>.Ok(projects);
+        }
+        catch (Exception e)
+        {
+            return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+        }
     }
 
-    public Task<IResult<Project>> GetByIdAsync(int id)
+    public async Task<IResult<IEnumerable<Project>>> GetAllProjectsIncludingAllPropertiesAsync()
     {
-        throw new NotImplementedException();
+        var projects = new List<Project>();
+        
+        try
+        {
+            var entities = await _projectRepository.GetAllProjectsIncludingAllPropertiesAsync();
+            projects.AddRange(entities.Select(entity => ProjectFactory.Create(entity)));
+            return Result<IEnumerable<Project>>.Ok(projects);
+        }
+        catch (Exception e)
+        {
+            return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+        }
+
     }
 
-    public Task<IResult> UpdateAsync(int id, ProjectDto? dto)
+    public async Task<IResult<Project>> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var entity = await _projectRepository.GetAsync(x => x.ProjectId == id);
+            return Result<Project>.Ok(ProjectFactory.Create(entity));
+        }
+        catch (Exception e)
+        {
+            return Result<Project>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
+        }
     }
 
-    public Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> UpdateAsync(int id, ProjectDto? dto)
     {
-        throw new NotImplementedException();
+        if (dto is null)
+            return Result.BadRequest("Project Dto is null");
+                
+        if (await _projectRepository.AlreadyExistsAsync(x => x.ProjectId == id) == false)
+            return Result.AlreadyExists($"Project with id {id} does not exist");
+
+        try
+        {
+            var entity = ProjectFactory.Create(dto);
+            await _projectRepository.UpdateAsync( (x => x.ProjectId == id), entity);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"There was an error updating Project: {e.Message}");
+        }
+    }
+
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        if (await _projectRepository.AlreadyExistsAsync(x => x.ProjectId == id) == false)
+            return Result.BadRequest($"Project with id {id} does not exist");
+        
+        try
+        { 
+            await _projectRepository.DeleteAsync(x => x.ProjectId == id);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.ExceptionError($"There was an error deleting Project: {e.Message}");
+        }
     }
 }

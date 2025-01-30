@@ -7,8 +7,15 @@ namespace Service.Factories;
 public static class CustomerFactory
 {
     public static CustomerDto Create() => new CustomerDto();
-    
-    public static CustomerEntity Create(CustomerDto dto) => new CustomerEntity();
+
+    public static CustomerEntity Create(CustomerDto dto) =>
+        dto is null
+            ? throw new ArgumentNullException(nameof(dto))
+            : new CustomerEntity()
+            {
+                CompanyName = dto.CompanyName,
+                Email = dto.Email
+            };
 
     public static Customer Create(CustomerEntity entity) =>
         entity is null

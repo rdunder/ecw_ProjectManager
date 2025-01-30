@@ -10,8 +10,8 @@ public class Project
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     
-    public StatusInfo Status { get; set; } = null!;
-    public Customer Customer { get; set; } = null!;
-    public ServiceInfo Service { get; set; } = null!;
-    public Employee ProjectManager { get; set; } = null!;
+    public StatusInfo? Status { get; set; }
+    public Customer? Customer { get; set; }
+    public ServiceInfo? Service { get; set; }
+    public Employee? ProjectManager { get; set; }
 }
