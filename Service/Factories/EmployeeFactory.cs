@@ -30,8 +30,8 @@ public static class EmployeeFactory
                 LastName = entity.LastName,
                 Email = entity.Email,
                 PhoneNumber = entity.PhoneNumber,
-                //RoleId = entity.RoleId,
-                //Role = RoleFactory.Create(entity.Role)
+                RoleId = entity.RoleId,
+                Role = RoleFactory.Create(entity.Role)
             };
 
     public static EmployeeEntity Create(Employee model) =>

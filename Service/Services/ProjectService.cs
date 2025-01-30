@@ -78,7 +78,7 @@ public class ProjectService(
         }
         catch (Exception e)
         {
-            return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+            return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Projects: {e.Message}");
         }
 
     }
@@ -88,6 +88,19 @@ public class ProjectService(
         try
         {
             var entity = await _projectRepository.GetAsync(x => x.ProjectId == id);
+            return Result<Project>.Ok(ProjectFactory.Create(entity));
+        }
+        catch (Exception e)
+        {
+            return Result<Project>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
+        }
+    }
+    
+    public async Task<IResult<Project>> GetByIdIncludingAllPropertiesAsync(int id)
+    {
+        try
+        {
+            var entity = await _projectRepository.GetIncludingAllPropertiesAsync(x => x.ProjectId == id);
             return Result<Project>.Ok(ProjectFactory.Create(entity));
         }
         catch (Exception e)
@@ -107,6 +120,8 @@ public class ProjectService(
         try
         {
             var entity = ProjectFactory.Create(dto);
+            entity.ProjectId = id;
+            
             await _projectRepository.UpdateAsync( (x => x.ProjectId == id), entity);
             return Result.Ok();
         }

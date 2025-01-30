@@ -8,5 +8,5 @@ public class ServiceInfo
     public string ServiceName { get; set; } = null!;
     public decimal Price { get; set; }
     
-    public ICollection<Project> Projects { get; set; } = new List<Project>();
+    //public ICollection<Project> Projects { get; set; } = new List<Project>();
 }

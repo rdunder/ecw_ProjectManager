@@ -67,7 +67,8 @@ public abstract class BaseRepository<TEntity>(SqlDataContext context) : IBaseRep
             if (existingEntity == null) return null!;
             
             _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-            await _context.SaveChangesAsync();
+            
+            var rowsAffected = await _context.SaveChangesAsync();
             return existingEntity;
         }
         catch (Exception e)

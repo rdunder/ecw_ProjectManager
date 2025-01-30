@@ -22,7 +22,7 @@ public static class CustomerFactory
             {
                 Id = entity.Id,
                 CompanyName = entity.CompanyName,
-                Email = entity.Email
-                //ContactPerson = ContactPersonFactory.Create(entity.ContactPerson)
+                Email = entity.Email,
+                ContactPerson = ContactPersonFactory.Create(entity.ContactPerson)
             };
 }

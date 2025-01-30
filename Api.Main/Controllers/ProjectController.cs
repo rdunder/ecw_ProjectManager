@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Service.Dtos;
 using Service.Interfaces;
 using Service.Models;
+using IResult = Service.Interfaces.IResult;
 
 namespace Api.Main.Controllers
 {
@@ -14,29 +16,36 @@ namespace Api.Main.Controllers
         [HttpGet]
         public async Task<IResult<IEnumerable<Project>>> Get()
         {
-            var result = await _projectService.GetAllAsync();
+            var result = await _projectService.GetAllProjectsIncludingAllPropertiesAsync();
             return result;
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IResult<Project>> Get(int id)
         {
-            return "value";
+            var result = await _projectService.GetByIdIncludingAllPropertiesAsync(id);
+            return result;
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IResult> Post([FromBody] ProjectDto projectDto)
         {
+            var result = await _projectService.CreateAsync(projectDto);
+            return result;
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IResult> Put(int id, [FromBody] ProjectDto projectDto)
         {
+            var result = await _projectService.UpdateAsync(id, projectDto);
+            return result;
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IResult> Delete(int id)
         {
+            var result = await _projectService.DeleteAsync(id);
+            return result;
         }
     }
 }
