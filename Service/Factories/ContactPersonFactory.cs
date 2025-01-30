@@ -29,6 +29,7 @@ public static class ContactPersonFactory
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
                 Email = entity.Email,
-                PhoneNumber = entity.PhoneNumber
+                PhoneNumber = entity.PhoneNumber,
+                CustomerId = entity.CustomerId
             };
 }

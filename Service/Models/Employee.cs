@@ -13,5 +13,5 @@ public class Employee
     public int RoleId { get; set; }
     public Role Role { get; set; } = null!;
     
-    public ICollection<Project> Projects { get; set; } = new List<Project>();
+    //public ICollection<Project> Projects { get; set; } = new List<Project>();
 }

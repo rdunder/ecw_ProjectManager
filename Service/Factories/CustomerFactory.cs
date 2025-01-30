@@ -18,13 +18,11 @@ public static class CustomerFactory
             };
 
     public static Customer Create(CustomerEntity entity) =>
-        entity is null
-            ? throw new ArgumentNullException(nameof(entity))
-            : new Customer
+            new Customer
             {
                 Id = entity.Id,
                 CompanyName = entity.CompanyName,
-                Email = entity.Email,
-                ContactPerson = ContactPersonFactory.Create(entity.ContactPerson)
+                Email = entity.Email
+                //ContactPerson = ContactPersonFactory.Create(entity.ContactPerson)
             };
 }

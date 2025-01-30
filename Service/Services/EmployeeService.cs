@@ -77,7 +77,9 @@ public class EmployeeService(
         try
         {
             var entity = await _employeeRepository.GetAsync(x => x.EmploymentNumber == id);
-            return Result<Employee>.Ok(EmployeeFactory.Create(entity));
+            var employee = EmployeeFactory.Create(entity);
+            
+            return Result<Employee>.Ok(employee);
         }
         catch (Exception e)
         {
