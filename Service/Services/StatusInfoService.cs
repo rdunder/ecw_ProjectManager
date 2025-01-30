@@ -64,15 +64,15 @@ public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : ISt
         }
     }
 
-    public async Task<IResult> UpdateAsync(StatusInfo? model)
+    public async Task<IResult> UpdateAsync(int id, StatusInfoDto? dto)
     {
-        if (model is null) 
+        if (dto is null) 
             return Result.BadRequest("StatusInfo is null");
 
         try
         {
-            var entity = StatusInfoFactory.Create(model);
-            await _statusInfoRepository.UpdateAsync( (x => x.Id == model.Id), entity);
+            var entity = StatusInfoFactory.Create(dto);
+            await _statusInfoRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }
         catch (Exception e)

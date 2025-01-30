@@ -85,18 +85,18 @@ public class EmployeeService(
         }
     }
 
-    public async Task<IResult> UpdateAsync(Employee? model)
+    public async Task<IResult> UpdateAsync(int id, EmployeeDto? dto)
     {
-        if (model is null)
+        if (dto is null)
             return Result.BadRequest("EmployeeDto is null");
                 
-        if (await _employeeRepository.AlreadyExistsAsync(x => x.EmploymentNumber == model.EmploymentNumber) == false)
-            return Result.AlreadyExists($"Employee with id {model.EmploymentNumber} does not exist");
+        if (await _employeeRepository.AlreadyExistsAsync(x => x.EmploymentNumber == id) == false)
+            return Result.AlreadyExists($"Employee with id {id} does not exist");
 
         try
         {
-            var entity = EmployeeFactory.Create(model);
-            await _employeeRepository.UpdateAsync( (x => x.EmploymentNumber == model.EmploymentNumber), entity);
+            var entity = EmployeeFactory.Create(dto);
+            await _employeeRepository.UpdateAsync( (x => x.EmploymentNumber == id), entity);
             return Result.Ok();
         }
         catch (Exception e)

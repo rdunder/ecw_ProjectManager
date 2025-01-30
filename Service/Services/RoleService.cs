@@ -64,15 +64,15 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         }
     }
 
-    public async Task<IResult> UpdateAsync(Role? role)
+    public async Task<IResult> UpdateAsync(int id, RoleDto? dto)
     {
-        if (role is null) 
+        if (dto is null) 
             return Result.BadRequest("Role is null");
 
         try
         {
-            var entity = RoleFactory.Create(role);
-            await _roleRepository.UpdateAsync( (x => x.Id == role.Id), entity);
+            var entity = RoleFactory.Create(dto);
+            await _roleRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }
         catch (Exception e)

@@ -61,15 +61,15 @@ public class ServiceInfoService(IServiceInfoRepository serviceInfoRepository) : 
         }
     }
 
-    public async Task<IResult> UpdateAsync(ServiceInfo? model)
+    public async Task<IResult> UpdateAsync(int id, ServiceInfoDto? dto)
     {
-        if (model is null) 
+        if (dto is null) 
             return Result.BadRequest("Service Model is null");
 
         try
         {
-            var entity = ServiceInfoFactory.Create(model);
-            await _serviceInfoRepository.UpdateAsync( (x => x.Id == model.Id), entity);
+            var entity = ServiceInfoFactory.Create(dto);
+            await _serviceInfoRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }
         catch (Exception e)

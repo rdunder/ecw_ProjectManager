@@ -8,7 +8,7 @@ public interface IService<TModel, TDto>
     public Task<IResult> CreateAsync(TDto? dto);
     public Task<IResult<IEnumerable<TModel>>> GetAllAsync();
     public Task<IResult<TModel>> GetByIdAsync(int id);
-    public Task<IResult> UpdateAsync(TModel? model);
+    public Task<IResult> UpdateAsync(int id, TDto? dto);
     public Task<IResult> DeleteAsync(int id);
 }
 

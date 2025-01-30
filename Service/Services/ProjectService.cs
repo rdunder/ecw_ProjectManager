@@ -27,7 +27,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         throw new NotImplementedException();
     }
 
-    public Task<IResult> UpdateAsync(Project model)
+    public Task<IResult> UpdateAsync(int id, ProjectDto? dto)
     {
         throw new NotImplementedException();
     }
