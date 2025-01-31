@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public abstract class BaseRepository<TEntity>(SqlDataContext context) : IBaseRepository<TEntity> where TEntity : class
+public abstract class BaseRepository<TEntity>(SqlDataContext context) 
+    : IBaseRepository<TEntity> where TEntity : class
 {
-    private readonly SqlDataContext _context = context;
-    private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+    protected readonly SqlDataContext _context = context;
+    protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
 
     public virtual async Task<TEntity> CreateAsync(TEntity entity)
@@ -29,11 +30,16 @@ public abstract class BaseRepository<TEntity>(SqlDataContext context) : IBaseRep
         }
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
     {
         try
         {
-            return await _dbSet.ToListAsync();
+            if (includeExpression == null) 
+                return await _dbSet.ToListAsync();
+            
+            IQueryable<TEntity> query = _dbSet;
+            query = includeExpression(query);
+            return await query.ToListAsync();
         }
         catch (Exception e)
         {
@@ -42,13 +48,18 @@ public abstract class BaseRepository<TEntity>(SqlDataContext context) : IBaseRep
         }
     }
 
-    public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression)
+    public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
     {
         if (expression == null) return null!;
 
         try
         {
-            return await _dbSet.FirstOrDefaultAsync(expression) ?? null!;
+            if (includeExpression == null) 
+                return await _dbSet.FirstOrDefaultAsync(expression) ?? null!;
+            
+            IQueryable<TEntity> query = _dbSet;
+            query = includeExpression(query);
+            return await query.FirstOrDefaultAsync(expression) ?? null!;
         }
         catch (Exception e)
         {

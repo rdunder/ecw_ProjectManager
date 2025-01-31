@@ -9,7 +9,6 @@ public class EmployeeRepository(SqlDataContext context) :
     BaseRepository<EmployeeEntity>(context),
     IEmployeeRepository
 {
-    private readonly SqlDataContext _context = context;
     public async Task<IEnumerable<EmployeeEntity>> GetAllEmployeesIncludingRoleAsync()
     {
         try

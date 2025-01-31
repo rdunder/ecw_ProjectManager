@@ -9,8 +9,6 @@ public class CustomerRepository(SqlDataContext context) :
     BaseRepository<CustomerEntity>(context),
     ICustomerRepository
 {
-    private readonly SqlDataContext _context = context;
-
     public async Task<IEnumerable<CustomerEntity>> GetAllCustomersIncludingContactPersonAsync()
     {
         try

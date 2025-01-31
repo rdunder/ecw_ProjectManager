@@ -12,10 +12,6 @@ public class ProjectRepository(SqlDataContext context) :
     IProjectRepository
 {
     
-    private readonly SqlDataContext _context = context;
-    
-    
-    
     public async Task<IEnumerable<ProjectEntity>> GetAllProjectsIncludingAllPropertiesAsync()
     {
         try
