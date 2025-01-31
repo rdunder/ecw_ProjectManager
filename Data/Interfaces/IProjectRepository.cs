@@ -5,6 +5,6 @@ namespace Data.Interfaces;
 
 public interface IProjectRepository : IBaseRepository<ProjectEntity>
 {
-    public Task<IEnumerable<ProjectEntity>> GetAllProjectsIncludingAllPropertiesAsync();
-    public Task<ProjectEntity> GetIncludingAllPropertiesAsync(Expression<Func<ProjectEntity, bool>>? expression);
+    public Task<IEnumerable<ProjectEntity>> GetAllWithDetailsAsync();
+    public Task<ProjectEntity> GetWithDetailsAsync(Expression<Func<ProjectEntity, bool>>? expression);
 }

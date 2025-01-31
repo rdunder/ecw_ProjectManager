@@ -12,7 +12,7 @@ public class ProjectRepository(SqlDataContext context) :
     IProjectRepository
 {
     
-    public async Task<IEnumerable<ProjectEntity>> GetAllProjectsIncludingAllPropertiesAsync()
+    public async Task<IEnumerable<ProjectEntity>> GetAllWithDetailsAsync()
     {
         try
         {
@@ -31,7 +31,7 @@ public class ProjectRepository(SqlDataContext context) :
         }
     }
 
-    public async Task<ProjectEntity> GetIncludingAllPropertiesAsync(Expression<Func<ProjectEntity, bool>>? expression)
+    public async Task<ProjectEntity> GetWithDetailsAsync(Expression<Func<ProjectEntity, bool>>? expression)
     {
         if (expression == null) return null!;
         

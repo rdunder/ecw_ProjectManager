@@ -35,16 +35,37 @@ public static class ProjectFactory
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 
-                Status = StatusInfoFactory.Create(entity.Status),
-                Customer = CustomerFactory.Create(entity.Customer),
-                Service = ServiceInfoFactory.Create(entity.Service),
-                ProjectManager = EmployeeFactory.Create(entity.ProjectManager)
+                StatusId = entity.StatusId,
+                CustomerId = entity.CustomerId,
+                ServiceId = entity.ServiceId,
+                ProjectManagerId = entity.ProjectManagerId
+                
+                // Status = StatusInfoFactory.Create(entity.Status) ?? null,
+                // Customer = CustomerFactory.Create(entity.Customer) ?? null,
+                // Service = ServiceInfoFactory.Create(entity.Service) ?? null,
+                // ProjectManager = EmployeeFactory.Create(entity.ProjectManager) ?? null,
             };
 
     public static ProjectWithDetails CreateWithDetails(ProjectEntity entity) =>
         entity is null
             ? throw new ArgumentNullException(nameof(entity))
-            : new ProjectWithDetails();
+            : new ProjectWithDetails()
+            {
+                ProjectId = entity.ProjectId,
+                ProjectName = entity.ProjectName,
+                ProjectDescription = entity.ProjectDescription,
+                StartDate = entity.StartDate,
+                EndDate = entity.EndDate,
+                
+                Status = entity.Status.StatusName,
+                Service = entity.Service.ServiceName,
+                Price = entity.Service.Price,
+                
+                //Status = StatusInfoFactory.Create(entity.Status),
+                Customer = CustomerFactory.Create(entity.Customer),
+                //Service = ServiceInfoFactory.Create(entity.Service),
+                ProjectManager = EmployeeFactory.Create(entity.ProjectManager)
+            };
 
 
 }

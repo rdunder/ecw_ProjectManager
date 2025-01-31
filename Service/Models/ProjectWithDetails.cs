@@ -8,8 +8,12 @@ public class ProjectWithDetails
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     
-    public StatusInfo? Status { get; set; }
+    public string Status { get; set; } = null!;
+    public string Service { get; set; } = null!;
+    public decimal Price { get; set; }
+    
+    //public StatusInfo? Status { get; set; }
     public Customer? Customer { get; set; }
-    public ServiceInfo? Service { get; set; }
+    //public ServiceInfo? Service { get; set; }
     public Employee? ProjectManager { get; set; }
 }

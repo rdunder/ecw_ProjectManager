@@ -10,8 +10,11 @@ public class Project
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     
-    public StatusInfo? Status { get; set; }
-    public Customer? Customer { get; set; }
-    public ServiceInfo? Service { get; set; }
-    public Employee? ProjectManager { get; set; }
+    public int StatusId { get; set; }
+
+    public int CustomerId { get; set; }
+
+    public int ServiceId { get; set; }
+
+    public int ProjectManagerId { get; set; }
 }

@@ -16,14 +16,30 @@ namespace Api.Main.Controllers
         [HttpGet]
         public async Task<IResult<IEnumerable<Project>>> Get()
         {
-            var result = await _projectService.GetAllProjectsIncludingAllPropertiesAsync();
+            //var result = await _projectService.GetAllProjectsIncludingAllPropertiesAsync();
+            var result = await _projectService.GetAllAsync();
+            return result;
+        }
+        
+        [HttpGet("details")]
+        public async Task<IResult<IEnumerable<ProjectWithDetails>>> GetWithDetails()
+        {
+            //var result = await _projectService.GetAllProjectsIncludingAllPropertiesAsync();
+            var result = await _projectService.GetAllWithDetailsAsync();
             return result;
         }
 
         [HttpGet("{id}")]
         public async Task<IResult<Project>> Get(int id)
         {
-            var result = await _projectService.GetByIdIncludingAllPropertiesAsync(id);
+            var result = await _projectService.GetByIdAsync(id);
+            return result;
+        }
+        
+        [HttpGet("details/{id}")]
+        public async Task<IResult<ProjectWithDetails>> GetWithDetails(int id)
+        {
+            var result = await _projectService.GetByIdWithDetailsAsync(id);
             return result;
         }
 

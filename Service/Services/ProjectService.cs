@@ -65,22 +65,27 @@ public class ProjectService(
             return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
         }
     }
-
-    public async Task<IResult<IEnumerable<Project>>> GetAllProjectsIncludingAllPropertiesAsync()
+    
+    public async Task<IResult<IEnumerable<ProjectWithDetails>>> GetAllWithDetailsAsync()
     {
-        var projects = new List<Project>();
+        var projects = new List<ProjectWithDetails>();
         
         try
         {
-            var entities = await _projectRepository.GetAllProjectsIncludingAllPropertiesAsync();
-            projects.AddRange(entities.Select(entity => ProjectFactory.Create(entity)));
-            return Result<IEnumerable<Project>>.Ok(projects);
+            var entities = await _projectRepository.GetAllAsync(query =>
+                    query
+                        .Include(x => x.Status)
+                        .Include(x => x.Customer).ThenInclude(x => x.ContactPerson)
+                        .Include(x => x.Service)
+                        .Include(x => x.ProjectManager).ThenInclude(x => x.Role)
+                    );
+            projects.AddRange(entities.Select(entity => ProjectFactory.CreateWithDetails(entity)));
+            return Result<IEnumerable<ProjectWithDetails>>.Ok(projects);
         }
         catch (Exception e)
         {
-            return Result<IEnumerable<Project>>.ExceptionError($"There was an error getting all Projects: {e.Message}");
+            return Result<IEnumerable<ProjectWithDetails>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
         }
-
     }
 
     public async Task<IResult<Project>> GetByIdAsync(int id)
@@ -96,16 +101,22 @@ public class ProjectService(
         }
     }
     
-    public async Task<IResult<Project>> GetByIdIncludingAllPropertiesAsync(int id)
+    public async Task<IResult<ProjectWithDetails>> GetByIdWithDetailsAsync(int id)
     {
         try
         {
-            var entity = await _projectRepository.GetIncludingAllPropertiesAsync(x => x.ProjectId == id);
-            return Result<Project>.Ok(ProjectFactory.Create(entity));
+            var entity = await _projectRepository.GetAsync(x => x.ProjectId == id, query =>
+                query
+                    .Include(x => x.Status)
+                    .Include(x => x.Customer).ThenInclude(x => x.ContactPerson)
+                    .Include(x => x.Service)
+                    .Include(x => x.ProjectManager).ThenInclude(x => x.Role)
+                );
+            return Result<ProjectWithDetails>.Ok(ProjectFactory.CreateWithDetails(entity));
         }
         catch (Exception e)
         {
-            return Result<Project>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
+            return Result<ProjectWithDetails>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
         }
     }
 
