@@ -40,6 +40,11 @@ public static class ProjectFactory
                 Service = ServiceInfoFactory.Create(entity.Service),
                 ProjectManager = EmployeeFactory.Create(entity.ProjectManager)
             };
-    
-    
+
+    public static ProjectWithDetails CreateWithDetails(ProjectEntity entity) =>
+        entity is null
+            ? throw new ArgumentNullException(nameof(entity))
+            : new ProjectWithDetails();
+
+
 }

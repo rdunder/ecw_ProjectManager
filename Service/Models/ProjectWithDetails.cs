@@ -1,8 +1,6 @@
-using Data.Entities;
-
 namespace Service.Models;
-//  Clean this model to include only projects table information, no includes
-public class Project
+//  This model should include all the details, all the includes from the other tables.
+public class ProjectWithDetails
 {
     public int ProjectId { get; set; }
     public string ProjectName { get; set; } = null!;
