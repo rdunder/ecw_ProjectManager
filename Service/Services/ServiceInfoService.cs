@@ -69,6 +69,8 @@ public class ServiceInfoService(IServiceInfoRepository serviceInfoRepository) : 
         try
         {
             var entity = ServiceInfoFactory.Create(dto);
+            entity.Id = id;
+            
             await _serviceInfoRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }

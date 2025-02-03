@@ -39,11 +39,6 @@ public static class ProjectFactory
                 CustomerId = entity.CustomerId,
                 ServiceId = entity.ServiceId,
                 ProjectManagerId = entity.ProjectManagerId
-                
-                // Status = StatusInfoFactory.Create(entity.Status) ?? null,
-                // Customer = CustomerFactory.Create(entity.Customer) ?? null,
-                // Service = ServiceInfoFactory.Create(entity.Service) ?? null,
-                // ProjectManager = EmployeeFactory.Create(entity.ProjectManager) ?? null,
             };
 
     public static ProjectWithDetails CreateWithDetails(ProjectEntity entity) =>
@@ -61,9 +56,7 @@ public static class ProjectFactory
                 Service = entity.Service.ServiceName,
                 Price = entity.Service.Price,
                 
-                //Status = StatusInfoFactory.Create(entity.Status),
                 Customer = CustomerFactory.Create(entity.Customer),
-                //Service = ServiceInfoFactory.Create(entity.Service),
                 ProjectManager = EmployeeFactory.Create(entity.ProjectManager)
             };
 

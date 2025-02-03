@@ -1,6 +1,7 @@
 using System.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Service.Dtos;
 using Service.Interfaces;
 using Service.Models;
 using IResult = Service.Interfaces.IResult;
@@ -26,18 +27,24 @@ namespace Api.Main.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IResult> Post([FromBody] ServiceInfoDto dto)
         {
+            var result = await serviceInfoService.CreateAsync(dto);
+            return result;
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IResult> Put(int id, [FromBody] ServiceInfoDto dto)
         {
+            var result = await serviceInfoService.UpdateAsync(id, dto);
+            return result;
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IResult> Delete(int id)
         {
+            var result = await serviceInfoService.DeleteAsync(id);
+            return result;
         }
     }
 }

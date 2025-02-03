@@ -30,20 +30,20 @@ public static class EmployeeFactory
                 LastName = entity.LastName,
                 Email = entity.Email,
                 PhoneNumber = entity.PhoneNumber,
-                RoleId = entity.RoleId,
+                //RoleId = entity.RoleId,
                 Role = RoleFactory.Create(entity.Role)
             };
 
-    public static EmployeeEntity Create(Employee model) =>
-        model is null
-            ? throw new ArgumentNullException(nameof(model))
-            : new EmployeeEntity()
-            {
-                EmploymentNumber = model.EmploymentNumber,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                RoleId = model.RoleId,
-            };
+    // public static EmployeeEntity Create(Employee model) =>
+    //     model is null
+    //         ? throw new ArgumentNullException(nameof(model))
+    //         : new EmployeeEntity()
+    //         {
+    //             EmploymentNumber = model.EmploymentNumber,
+    //             FirstName = model.FirstName,
+    //             LastName = model.LastName,
+    //             Email = model.Email,
+    //             PhoneNumber = model.PhoneNumber,
+    //             //RoleId = model.RoleId,
+    //         };
 }

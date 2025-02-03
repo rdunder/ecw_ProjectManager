@@ -60,7 +60,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         }
         catch (Exception e)
         {
-            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Customers: {e.Message}");
         }   
     }
 
@@ -88,6 +88,8 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         try
         {
             var entity = CustomerFactory.Create(dto);
+            entity.Id = id;
+            
             await _customerRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }

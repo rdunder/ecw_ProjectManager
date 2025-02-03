@@ -72,6 +72,8 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         try
         {
             var entity = RoleFactory.Create(dto);
+            entity.Id = id;
+            
             await _roleRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }

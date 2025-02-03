@@ -1,10 +1,9 @@
-using System.Collections;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using Service.Helpers;
+using Service.Dtos;
 using Service.Interfaces;
 using Service.Models;
-using IResult = Microsoft.AspNetCore.Http.IResult;
+using IResult = Service.Interfaces.IResult;
 
 namespace Api.Main.Controllers
 {
@@ -27,18 +26,24 @@ namespace Api.Main.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IResult> Post([FromBody] StatusInfoDto dto)
         {
+            var result = await statusInfoService.CreateAsync(dto);
+            return result;
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IResult> Put(int id, [FromBody] StatusInfoDto dto)
         {
+            var result = await statusInfoService.UpdateAsync(id, dto);
+            return result;
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IResult> Delete(int id)
         {
+            var result = await statusInfoService.DeleteAsync(id);
+            return result;
         }
     }
 }

@@ -79,6 +79,8 @@ public class ContactPersonService(
         try
         {
             var entity = ContactPersonFactory.Create(dto);
+            entity.Id = id;
+            
             await _contactPersonRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }

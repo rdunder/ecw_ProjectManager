@@ -1,7 +1,5 @@
-using Data.Entities;
 
 namespace Service.Models;
-//  Clean this model to include only projects table information, no includes
 public class Project
 {
     public int ProjectId { get; set; }
@@ -11,10 +9,7 @@ public class Project
     public DateTime EndDate { get; set; }
     
     public int StatusId { get; set; }
-
     public int CustomerId { get; set; }
-
     public int ServiceId { get; set; }
-
     public int ProjectManagerId { get; set; }
 }

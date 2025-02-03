@@ -1,9 +1,9 @@
-using System.Collections;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
+using Service.Dtos;
 using Service.Interfaces;
 using Service.Models;
-using IResult = Microsoft.AspNetCore.Http.IResult;
+using IResult = Service.Interfaces.IResult;
 
 namespace Api.Main.Controllers
 {
@@ -25,22 +25,25 @@ namespace Api.Main.Controllers
             return result;
         }
 
-        // POST api/<ContactPersonController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IResult> Post([FromBody] ContactPersonDto dto)
         {
+            var result = await contactPersonService.CreateAsync(dto);
+            return result;
         }
 
-        // PUT api/<ContactPersonController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IResult> Put(int id, [FromBody] ContactPersonDto dto)
         {
+            var result = await contactPersonService.UpdateAsync(id, dto);
+            return result;
         }
 
-        // DELETE api/<ContactPersonController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IResult> Delete(int id)
         {
+            var result = await contactPersonService.DeleteAsync(id);
+            return result;
         }
     }
 }

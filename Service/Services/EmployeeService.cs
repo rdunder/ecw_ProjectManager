@@ -113,6 +113,8 @@ public class EmployeeService(
         try
         {
             var entity = EmployeeFactory.Create(dto);
+            entity.EmploymentNumber = id;
+            
             await _employeeRepository.UpdateAsync( (x => x.EmploymentNumber == id), entity);
             return Result.Ok();
         }

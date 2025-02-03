@@ -68,10 +68,15 @@ public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : ISt
     {
         if (dto is null) 
             return Result.BadRequest("StatusInfo is null");
+        
+        if (await _statusInfoRepository.AlreadyExistsAsync(x => x.Id == id) == false)
+            return Result.NotFound($"The status info record with ID: <{id}> could not be found");
 
         try
         {
             var entity = StatusInfoFactory.Create(dto);
+            entity.Id = id;
+            
             await _statusInfoRepository.UpdateAsync( (x => x.Id == id), entity);
             return Result.Ok();
         }

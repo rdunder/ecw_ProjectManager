@@ -10,7 +10,7 @@ public class Employee
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
 
-    public int RoleId { get; set; }
+    //public int RoleId { get; set; }
     public Role Role { get; set; } = null!;
     
     //public ICollection<Project> Projects { get; set; } = new List<Project>();

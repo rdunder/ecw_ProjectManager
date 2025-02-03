@@ -17,12 +17,22 @@ public static class CustomerFactory
                 Email = dto.Email
             };
 
-    public static Customer Create(CustomerEntity entity) =>
-            new Customer
-            {
-                Id = entity.Id,
-                CompanyName = entity.CompanyName,
-                Email = entity.Email,
-                ContactPerson = ContactPersonFactory.Create(entity.ContactPerson)
-            };
+    public static Customer Create(CustomerEntity entity)
+    {
+        var contactPerson = new ContactPerson();
+            
+        if (entity.ContactPerson != null)
+            contactPerson = ContactPersonFactory.Create(entity.ContactPerson);
+            
+        var customer = new Customer
+        {
+            Id = entity.Id,
+            CompanyName = entity.CompanyName,
+            Email = entity.Email,
+            ContactPerson = contactPerson
+        };
+        
+        return customer;
+    }
+            
 }
