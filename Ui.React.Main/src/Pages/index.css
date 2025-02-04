@@ -14,7 +14,7 @@ body {
 }
 
 a {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 500;
     color: rgb(110, 76, 76);
 
@@ -22,6 +22,7 @@ a {
         color: firebrick;
     }
 }
+
 
 main {
     padding-inline: 1.5rem;
@@ -41,6 +42,10 @@ header {
         background-color: olive;
         color: white;
         border-radius: 6px;
+
+        &:hover {
+            cursor: pointer;
+        }
     }
 }
 
@@ -51,12 +56,17 @@ nav {
 
 .projectContainer {
     margin-bottom: 2rem;
-    box-shadow: 2px 5px 15px lightblue;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
 }
 
+.project-information {
+    display: flex;
+    gap: 2rem;
+}
+
 .title {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
 }
 
 

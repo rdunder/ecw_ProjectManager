@@ -42,9 +42,11 @@ export const Index = () => {
                 <div key={project.projectId}   className='projectContainer'>
                     <div className='title'>
                         <Link to="/projectview" state={{project: project}} ><h2>{project.projectName}</h2> </Link>
+                        <div className='project-information'>
                         <p>Status: {project.status}</p>
                         <p>Time Frame: {project.startDate.split("T")[0]} - {project.endDate.split("T")[0]}</p>
                         <p>P.M: {project.projectManager.firstName} {project.projectManager.lastName}</p>
+                        </div>                        
                     </div>                    
                 </div>
             )) 
