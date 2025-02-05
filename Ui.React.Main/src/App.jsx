@@ -1,4 +1,4 @@
-// import './App.css'
+import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Index } from './Pages/Index'
 import { ProjectView } from './Pages/ProjectView'
@@ -18,5 +18,6 @@ function App() {
     </BrowserRouter>
   )
 }
+
 
 export default App

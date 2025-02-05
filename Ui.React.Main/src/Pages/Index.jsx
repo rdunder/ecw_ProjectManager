@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 
 
 import './index.css'
+import ProjectTable from '../Components/ProjectTable'
 
 export const Index = () => {
 
@@ -53,6 +54,7 @@ export const Index = () => {
             : <p>Loading ....</p>}
 
             </section>
+
         </main>
     </>
   )
