@@ -15,7 +15,7 @@ public class DataContextFactory : IDesignTimeDbContextFactory<SqlDataContext>
 
 
         var optionsBuilder = new DbContextOptionsBuilder<SqlDataContext>();
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("EcwProjectManagerDb"));
 
         return new SqlDataContext(optionsBuilder.Options);
     }
