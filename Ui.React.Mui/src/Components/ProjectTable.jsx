@@ -14,11 +14,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Divider,
   Collapse,
   Typography,
   Box,
   useMediaQuery,
   useTheme,
+  Grid2,
   tableBodyClasses
 } from '@mui/material';
 
@@ -35,12 +37,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
 import ProjectForm from './ProjectForm';
+//import { ProjectDetails } from './DropDownDetails';
 
 import { tryCallApiAsync } from '../Helpers/ApiCalls';
 //#endregion
 
 const ProjectTable = () => {
 
+  //#region   UseStates...
   const [projects, setProjects] = useState([]);
   const [statuses, setStatuses]   = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -62,14 +66,16 @@ const ProjectTable = () => {
     serviceId: 1,
     projectManagerId: 101
   });
+//#endregion
 
+  //#region   Local Variables
   const theme = useTheme();
   const isTabletScreen = useMediaQuery(theme.breakpoints.down("md"))
   const isDesktopScreen = useMediaQuery(theme.breakpoints.down("lg"))
   const isXlScreen = useMediaQuery(theme.breakpoints.down("xl"))
-  
-  //#region   Functions
-  //  Fetch data
+  //#endregion
+
+  //#region   Data Fetching Functions
   useEffect(() => {
     async function fetchData() {
       try {
@@ -113,9 +119,9 @@ const ProjectTable = () => {
       throw new Error('Fetching Projects failed');
     setProjects(projectResponse.data)
   }
-
-
-  //  Helper functions
+//#endregion
+ 
+  //#region   Helper functions
   const getStatusName = (statusId) => {
     return statuses.find(s => s.id === statusId)?.statusName || 'Unknown';
   };
@@ -133,7 +139,28 @@ const ProjectTable = () => {
     return pm ? `${pm.firstName} ${pm.lastName}` : 'Unknown';
   };
 
+  const getStatusColor = (statusId) => {
+    switch (statusId) {
 
+      case 1:
+        return {
+          bg: '#FEF3C7',
+          fc: '#92400E'
+        }
+
+      case 2:
+        return {
+          bg: '#DBEAFE',
+          fc: '#1E40AF'
+        }
+        
+      case 3:
+        return {
+          bg: '#DCFCE7',
+          fc: '#166534'
+        }        
+    }
+  };
 
   const toggleRow = (projectId) => {
     const newExpandedRows = new Set(expandedRows);
@@ -145,8 +172,9 @@ const ProjectTable = () => {
     setExpandedRows(newExpandedRows);
   };
 
+//#endregion
 
-
+//#region     CRUD Functions
   const handleAddProject = async () => {
     const projectToAdd = {
       ...newProject,
@@ -209,17 +237,53 @@ const ProjectTable = () => {
     setOpenEditDialog(false);
     setEditingProject(null);
   };
+  //#endregion
 
   const ProjectDetails = ({ project }) => (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>Project Details</Typography>
-      <Typography><strong>Description:</strong> {project.projectDescription}</Typography>
-      <Typography><strong>Start Date:</strong> {new Date(project.startDate).toLocaleDateString()}</Typography>
-      <Typography><strong>Customer:</strong> {getCustomerName(project.customerId)}</Typography>
-      <Typography><strong>Project Manager:</strong> {getProjectManagerName(project.projectManagerId)}</Typography>
+      
+      <Grid2 container columnSpacing={3} rowSpacing={5}>
+        
+        <Grid2 size={12}>
+          <Box p={3} borderRadius={2} boxShadow={`0px 0px 5px 0px ${getStatusColor(project.statusId).fc}`} >
+            <Typography variant="h6" gutterBottom>Project Details</Typography>
+            
+            <Typography><strong>Description:</strong></Typography>
+            <Typography>{project.projectDescription}</Typography>
+
+            <Divider sx={{marginTop: '15px'}}></Divider>
+            <Typography><strong>Time Frame:</strong></Typography>
+            <Typography gutterBottom>{new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}</Typography>
+            
+            <Divider sx={{marginTop: '15px'}}></Divider>
+            <Typography><strong>Service:</strong> </Typography>
+            <Typography>{getServiceName(project.serviceId)}</Typography>
+            <Typography>$ {services.find(s => s.id === project.serviceId).price}</Typography>
+          </Box>
+        </Grid2>
+        
+        <Grid2 size={{ xs: 12, sm: 4 }}>
+          <Typography><strong>Customer</strong></Typography>
+          <Typography>{getCustomerName(project.customerId)}</Typography>
+          <Typography>{customers.find(c => c.id === project.customerId).email}</Typography>          
+        </Grid2>
+        
+        <Grid2 size={{ xs: 12, sm: 4 }}>
+          <Typography><strong>Contact Person</strong></Typography>
+          <Typography>{customers.find(c => c.id === project.customerId).contactPerson.firstName} {customers.find(c => c.id === project.customerId).contactPerson.lastName}</Typography>
+          <Typography>{customers.find(c => c.id === project.customerId).contactPerson.email}</Typography>
+          <Typography>{customers.find(c => c.id === project.customerId).contactPerson.phoneNumber}</Typography>
+        </Grid2>
+        
+        <Grid2 size={{ xs: 12, sm: 4 }}>
+          <Typography><strong>Project Manager:</strong></Typography>
+          <Typography>{getProjectManagerName(project.projectManagerId)} ({projectManagers.find(pm => pm.employmentNumber === project.projectManagerId).role.roleName})</Typography>
+          <Typography>{projectManagers.find(pm => pm.employmentNumber === project.projectManagerId).email}</Typography>
+          <Typography>{projectManagers.find(pm => pm.employmentNumber === project.projectManagerId).phoneNumber}</Typography>
+        </Grid2>
+      </Grid2>      
     </Box>
   );
-//#endregion
   
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -241,7 +305,7 @@ const ProjectTable = () => {
               <TableRow>
                 <TableCell padding="checkbox" />
                 <TableCell>Name</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell align='center'>Status</TableCell>
                 {!isTabletScreen && <TableCell>Start Date</TableCell>}
                 {!isTabletScreen && <TableCell>End Date</TableCell>}
                 {!isDesktopScreen && <TableCell>Service</TableCell>}
@@ -263,7 +327,11 @@ const ProjectTable = () => {
                       </IconButton>
                     </TableCell>
                     <TableCell>{project.projectName}</TableCell>
-                    <TableCell>{getStatusName(project.statusId)}</TableCell>
+                    <TableCell> 
+                      <Box sx={{ padding: 1, borderRadius: 50, textAlign: 'center', backgroundColor: getStatusColor(project.statusId).bg}}>
+                        <Typography fontSize={13} color={getStatusColor(project.statusId).fc}>{getStatusName(project.statusId)}</Typography>
+                      </Box>
+                    </TableCell>
                     {!isTabletScreen && <TableCell>{new Date(project.startDate).toLocaleDateString()}</TableCell>}
                     {!isTabletScreen && <TableCell>{new Date(project.endDate).toLocaleDateString()}</TableCell>}
                     {!isDesktopScreen && <TableCell>{getServiceName(project.serviceId)}</TableCell>}
