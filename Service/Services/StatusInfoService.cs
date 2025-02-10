@@ -20,16 +20,22 @@ public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : ISt
                 
         if (await _statusInfoRepository.AlreadyExistsAsync(x => x.StatusName == dto.StatusName))
             return Result.AlreadyExists("The status name already exists");
-        
+
+        await _statusInfoRepository.BeginTransactionAsync();
         
         try
         {
             var entity = StatusInfoFactory.Create(dto);
             await _statusInfoRepository.CreateAsync(entity);
+
+            await _statusInfoRepository.SaveChangesAsync();
+            await _statusInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _statusInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was error when creating StatusInfo: {e.Message}");
         }
     }
@@ -71,17 +77,24 @@ public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : ISt
         
         if (await _statusInfoRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.NotFound($"The status info record with ID: <{id}> could not be found");
+        
+        await _statusInfoRepository.BeginTransactionAsync();
 
         try
         {
             var entity = StatusInfoFactory.Create(dto);
             entity.Id = id;
             
-            await _statusInfoRepository.UpdateAsync( (x => x.Id == id), entity);
+            _statusInfoRepository.Update(entity);
+            
+            await _statusInfoRepository.SaveChangesAsync();
+            await _statusInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _statusInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was error when updating the Status: {e.Message}");
         }
     }
@@ -91,13 +104,21 @@ public class StatusInfoService(IStatusInfoRepository statusInfoRepository) : ISt
         if (await _statusInfoRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.BadRequest("Role Id Does Not Exists");
         
+        await _statusInfoRepository.BeginTransactionAsync();
+        
         try
         {
-            var result = await _statusInfoRepository.DeleteAsync(x => x.Id == id);
+            var entity = await _statusInfoRepository.GetAsync(x => x.Id == id);
+            _statusInfoRepository.Delete(entity);
+            
+            await _statusInfoRepository.SaveChangesAsync();
+            await _statusInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _statusInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was error when deleting Status: {e.Message}");
         }
     }

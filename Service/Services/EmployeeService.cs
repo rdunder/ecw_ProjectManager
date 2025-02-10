@@ -27,14 +27,21 @@ public class EmployeeService(
         if (await _employeeRepository.AlreadyExistsAsync(x => x.Email == dto.Email))
             return Result.AlreadyExists($"Employee with email {dto.Email} already exists");
 
+        await _employeeRepository.BeginTransactionAsync();
+
         try
         {
             var entity = EmployeeFactory.Create(dto);
             await _employeeRepository.CreateAsync(entity);
+
+            await _employeeRepository.SaveChangesAsync();
+            await _employeeRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _employeeRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"An error occured creating Employee: {e.Message}");
         }
     }
@@ -109,17 +116,24 @@ public class EmployeeService(
                 
         if (await _employeeRepository.AlreadyExistsAsync(x => x.EmploymentNumber == id) == false)
             return Result.AlreadyExists($"Employee with id {id} does not exist");
+        
+        await _employeeRepository.BeginTransactionAsync();
 
         try
         {
             var entity = EmployeeFactory.Create(dto);
             entity.EmploymentNumber = id;
             
-            await _employeeRepository.UpdateAsync( (x => x.EmploymentNumber == id), entity);
+            _employeeRepository.Update(entity);
+            
+            await _employeeRepository.SaveChangesAsync();
+            await _employeeRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _employeeRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error updating Employee: {e.Message}");
         }
     }
@@ -129,13 +143,21 @@ public class EmployeeService(
         if (await _employeeRepository.AlreadyExistsAsync(x => x.EmploymentNumber == id) == false)
             return Result.BadRequest($"Employee with id {id} does not exist");
         
+        await _employeeRepository.BeginTransactionAsync();
+        
         try
-        { 
-            await _employeeRepository.DeleteAsync(x => x.EmploymentNumber == id);
+        {
+            var entity = await _employeeRepository.GetAsync(x => x.EmploymentNumber == id);
+            _employeeRepository.Delete(entity);
+            
+            await _employeeRepository.SaveChangesAsync();
+            await _employeeRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _employeeRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error deleting Employee: {e.Message}");
         }
     }
