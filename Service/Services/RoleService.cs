@@ -21,15 +21,22 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
                 
         if (await _roleRepository.AlreadyExistsAsync(x => x.RoleName == dto.RoleName))
             return Result.AlreadyExists("Role already exists");
+
+        await _roleRepository.BeginTransactionAsync();
         
         try
         {
             var entity = RoleFactory.Create(dto);
             await _roleRepository.CreateAsync(entity);
+
+            await _roleRepository.SaveChangesAsync();
+            await _roleRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _roleRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when creating role :: {e.Message}");
         }
     }
@@ -68,17 +75,24 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     {
         if (dto is null) 
             return Result.BadRequest("Role is null");
+        
+        await _roleRepository.BeginTransactionAsync();
 
         try
         {
             var entity = RoleFactory.Create(dto);
             entity.Id = id;
             
-            await _roleRepository.UpdateAsync( (x => x.Id == id), entity);
+            _roleRepository.Update(entity);
+            
+            await _roleRepository.SaveChangesAsync();
+            await _roleRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _roleRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when updating role: {e.Message}");
         }
     }
@@ -87,14 +101,22 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     {
         if (await _roleRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.BadRequest("Role Id Does Not Exists");
+        
+        await _roleRepository.BeginTransactionAsync();
             
         try
         {
-            var result = await _roleRepository.DeleteAsync(x => x.Id == id);
+            var entity = await _roleRepository.GetAsync(x => x.Id == id);
+            _roleRepository.Delete(entity);
+            
+            await _roleRepository.SaveChangesAsync();
+            await _roleRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _roleRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when deleting role: {e.Message}");
         }
     }

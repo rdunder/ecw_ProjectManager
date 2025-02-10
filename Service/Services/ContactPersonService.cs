@@ -27,14 +27,21 @@ public class ContactPersonService(
         if (await _contactPersonRepository.AlreadyExistsAsync(x => x.Email == dto.Email))
             return Result.AlreadyExists($"Contact Person with email {dto.Email} already exists");
 
+        await _contactPersonRepository.BeginTransactionAsync();
+
         try
         {
             var entity = ContactPersonFactory.Create(dto);
             await _contactPersonRepository.CreateAsync(entity);
+
+            await _contactPersonRepository.SaveChangesAsync();
+            await _contactPersonRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _contactPersonRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"An error occured creating Contact Person: {e.Message}");
         }
     }
@@ -51,7 +58,7 @@ public class ContactPersonService(
         }
         catch (Exception e)
         {
-            return Result<IEnumerable<ContactPerson>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+            return Result<IEnumerable<ContactPerson>>.ExceptionError($"There was an error getting all Contact Persons: {e.Message}");
         }
     }
 
@@ -75,17 +82,24 @@ public class ContactPersonService(
                 
         if (await _contactPersonRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.AlreadyExists($"ContactPerson with id {id} does not exist");
+        
+        await _contactPersonRepository.BeginTransactionAsync();
 
         try
         {
             var entity = ContactPersonFactory.Create(dto);
             entity.Id = id;
             
-            await _contactPersonRepository.UpdateAsync( (x => x.Id == id), entity);
+            _contactPersonRepository.Update(entity);
+            
+            await _contactPersonRepository.SaveChangesAsync();
+            await _contactPersonRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _contactPersonRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error updating ContactPerson: {e.Message}");
         }
     }
@@ -95,13 +109,21 @@ public class ContactPersonService(
         if (await _contactPersonRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.BadRequest($"Employee with id {id} does not exist");
         
+        await _contactPersonRepository.BeginTransactionAsync();
+        
         try
-        { 
-            await _contactPersonRepository.DeleteAsync(x => x.Id == id);
+        {
+            var entity = await _contactPersonRepository.GetAsync(x => x.Id == id);
+            _contactPersonRepository.Delete(entity);
+            
+            await _contactPersonRepository.SaveChangesAsync();
+            await _contactPersonRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _contactPersonRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error deleting Contact Person: {e.Message}");
         }
     }

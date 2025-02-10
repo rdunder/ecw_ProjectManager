@@ -19,15 +19,22 @@ public class ServiceInfoService(IServiceInfoRepository serviceInfoRepository) : 
                 
         if (await _serviceInfoRepository.AlreadyExistsAsync(x => x.ServiceName == dto.ServiceName))
             return Result.AlreadyExists("Service name already exists");
+
+        await _serviceInfoRepository.BeginTransactionAsync();
         
         try
         {
             var entity = ServiceInfoFactory.Create(dto);
             await _serviceInfoRepository.CreateAsync(entity);
+
+            await _serviceInfoRepository.SaveChangesAsync();
+            await _serviceInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _serviceInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when creating Service: {e.Message}");
         }
     }
@@ -65,17 +72,24 @@ public class ServiceInfoService(IServiceInfoRepository serviceInfoRepository) : 
     {
         if (dto is null) 
             return Result.BadRequest("Service Model is null");
+        
+        await _serviceInfoRepository.BeginTransactionAsync();
 
         try
         {
             var entity = ServiceInfoFactory.Create(dto);
             entity.Id = id;
             
-            await _serviceInfoRepository.UpdateAsync( (x => x.Id == id), entity);
+            _serviceInfoRepository.Update(entity);
+            
+            await _serviceInfoRepository.SaveChangesAsync();
+            await _serviceInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _serviceInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when updating the Service: {e.Message}");
         }
     }
@@ -85,13 +99,21 @@ public class ServiceInfoService(IServiceInfoRepository serviceInfoRepository) : 
         if (await _serviceInfoRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.BadRequest("Service Id Does Not Exists");
         
+        await _serviceInfoRepository.BeginTransactionAsync();
+        
         try
         {
-            var result = await _serviceInfoRepository.DeleteAsync(x => x.Id == id);
+            var entity = await _serviceInfoRepository.GetAsync(x => x.Id == id);
+            _serviceInfoRepository.Delete(entity);
+            
+            await _serviceInfoRepository.SaveChangesAsync();
+            await _serviceInfoRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _serviceInfoRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error when deleting service: {e.Message}");
         }
     }

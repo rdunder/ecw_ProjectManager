@@ -20,14 +20,21 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         if (await _customerRepository.AlreadyExistsAsync(x => x.Email == dto.Email))
             return Result.AlreadyExists($"Customer with email {dto.Email} already exists");
 
+        await _customerRepository.BeginTransactionAsync();
+
         try
         {
             var entity = CustomerFactory.Create(dto);
             await _customerRepository.CreateAsync(entity);
+
+            await _customerRepository.SaveChangesAsync();
+            await _customerRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _customerRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"An error occured creating Customer: {e.Message}");
         }
     }
@@ -44,7 +51,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         }
         catch (Exception e)
         {
-            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Employees: {e.Message}");
+            return Result<IEnumerable<Customer>>.ExceptionError($"There was an error getting all Customers: {e.Message}");
         }
     }
 
@@ -73,7 +80,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         }
         catch (Exception e)
         {
-            return Result<Customer>.ExceptionError($"There was an error getting Contact Person: {e.Message}");
+            return Result<Customer>.ExceptionError($"There was an error getting Customers: {e.Message}");
         }
     }
 
@@ -84,17 +91,24 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
                 
         if (await _customerRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.AlreadyExists($"Customer with id {id} does not exist");
+        
+        await _customerRepository.BeginTransactionAsync();
 
         try
         {
             var entity = CustomerFactory.Create(dto);
             entity.Id = id;
             
-            await _customerRepository.UpdateAsync( (x => x.Id == id), entity);
+            _customerRepository.Update(entity);
+            
+            await _customerRepository.SaveChangesAsync();
+            await _customerRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _customerRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error updating Customer: {e.Message}");
         }
     }
@@ -104,13 +118,21 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         if (await _customerRepository.AlreadyExistsAsync(x => x.Id == id) == false)
             return Result.BadRequest($"Customer with id {id} does not exist");
         
+        await _customerRepository.BeginTransactionAsync();
+        
         try
-        { 
-            await _customerRepository.DeleteAsync(x => x.Id == id);
+        {
+            var entity = await _customerRepository.GetAsync(x => x.Id == id);
+            _customerRepository.Delete(entity);
+            
+            await _customerRepository.SaveChangesAsync();
+            await _customerRepository.CommitTransactionAsync();
+            
             return Result.Ok();
         }
         catch (Exception e)
         {
+            await _customerRepository.RollbackTransactionAsync();
             return Result.ExceptionError($"There was an error deleting Customer: {e.Message}");
         }
     }
