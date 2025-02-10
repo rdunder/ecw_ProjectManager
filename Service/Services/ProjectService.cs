@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using Data.Contexts;
+
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Service.Dtos;
@@ -25,8 +24,8 @@ public class ProjectService(
         if (dto is null)
             return Result.BadRequest("Project Dto is null");
         
-        // if (await statusInfoRepository.AlreadyExistsAsync(x => x.Id == dto.StatusId) == false)
-        //     return Result.BadRequest("Status is not available");
+        if (await statusInfoRepository.AlreadyExistsAsync(x => x.Id == dto.StatusId) == false)
+            return Result.BadRequest("Status is not available");
         if (await serviceInfoRepository.AlreadyExistsAsync(x => x.Id == dto.ServiceId) == false)
             return Result.BadRequest("Service is not available");
         if (await customerRepository.AlreadyExistsAsync(x => x.Id == dto.CustomerId) == false)
