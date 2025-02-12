@@ -296,26 +296,27 @@ const ProjectTable = () => {
   
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h4">Projects</Typography>
+      <Box ele sx={{ p: 3 }}>
+        <Typography variant="h4" sx={{mb: 5}}>Projects</Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>          
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => setOpenAddDialog(true)}
+            // onClick={() => setOpenAddDialog(true)}
+            onClick={() => navigate('/projectxp')}
           >
             Add Project
           </Button>
           <Button
             variant="contained"
             startIcon={<ManageAccounts />}
-            onClick={() => navigate('/projectxp')}
+            onClick={() => navigate('/admin')}
           >
             Admin Panel
           </Button>
         </Box>
 
-        <TableContainer component={Paper}>
+        <TableContainer elevation={15} component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
