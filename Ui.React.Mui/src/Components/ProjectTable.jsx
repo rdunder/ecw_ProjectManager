@@ -30,6 +30,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
+  ManageAccounts,
 } from '@mui/icons-material';
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -40,6 +41,7 @@ import ProjectForm from './ProjectForm';
 //import { ProjectDetails } from './DropDownDetails';
 
 import { tryCallApiAsync } from '../Helpers/ApiCalls';
+import { useNavigate } from 'react-router';
 //#endregion
 
 const ProjectTable = () => {
@@ -69,6 +71,9 @@ const ProjectTable = () => {
 //#endregion
 
   //#region   Local Variables
+
+  const navigate = useNavigate();
+
   const theme = useTheme();
   const isTabletScreen = useMediaQuery(theme.breakpoints.down("md"))
   const isDesktopScreen = useMediaQuery(theme.breakpoints.down("lg"))
@@ -212,12 +217,16 @@ const ProjectTable = () => {
   };
 
   const handleEditProject = (project) => {
-    setEditingProject({
-      ...project,
-      startDate: dayjs(project.startDate),
-      endDate: dayjs(project.endDate),
-    });
-    setOpenEditDialog(true);
+
+    console.log(project.projectId)
+    navigate('/projectxp', { state: { projectId: project.projectId }})
+
+    // setEditingProject({
+    //   ...project,
+    //   startDate: dayjs(project.startDate),
+    //   endDate: dayjs(project.endDate),
+    // });
+    // setOpenEditDialog(true);
   };
 
   const handleUpdateProject = async () => {
@@ -246,7 +255,7 @@ const ProjectTable = () => {
         
         <Grid2 size={12}>
           <Box p={3} borderRadius={2} boxShadow={`0px 0px 5px 0px ${getStatusColor(project.statusId).fc}`} >
-            <Typography variant="h6" gutterBottom>Project Details</Typography>
+            <Typography variant="h6" gutterBottom>ID: {project.projectId}</Typography>
             
             <Typography><strong>Description:</strong></Typography>
             <Typography>{project.projectDescription}</Typography>
@@ -297,6 +306,13 @@ const ProjectTable = () => {
           >
             Add Project
           </Button>
+          <Button
+            variant="contained"
+            startIcon={<ManageAccounts />}
+            onClick={() => navigate('/projectxp')}
+          >
+            Admin Panel
+          </Button>
         </Box>
 
         <TableContainer component={Paper}>
@@ -337,8 +353,8 @@ const ProjectTable = () => {
                     {!isDesktopScreen && <TableCell>{getServiceName(project.serviceId)}</TableCell>}
                     {!isDesktopScreen && <TableCell>{getCustomerName(project.customerId)}</TableCell>}
                     {!isXlScreen && <TableCell>{getProjectManagerName(project.projectManagerId)}</TableCell>}
-                    <TableCell align="right">
-                      <IconButton onClick={() => handleEditProject(project)} color="primary">
+                    <TableCell align="right">               
+                      <IconButton onClick={() => handleEditProject(project)} color="primary">                   
                         <EditIcon />
                       </IconButton>
                       <IconButton onClick={() => handleDeleteProject(project.projectId)} color="error">

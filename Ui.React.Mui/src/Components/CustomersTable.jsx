@@ -16,10 +16,14 @@ import {
   DialogActions,
   Typography,
   Box,
-  useMediaQuery,
-  useTheme,
   TextField,
   Collapse,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 import {
@@ -37,53 +41,62 @@ import { tryCallApiAsync } from '../Helpers/ApiCalls';
 //#endregion
 
 
-const ServiceForm = ({ data, setData }) => {    
+const CustomerForm = ({ data, setData }) => {    
     return (
     <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
-            label="Service Name"
+            label="Company Name"
             fullWidth
-            value={data.serviceName || ''}
-            onChange={(e) => setData({ ...data, serviceName: e.target.value })}
+            value={data.companyName || ''}
+            onChange={(e) => setData({ ...data, companyName: e.target.value })}
         />
         <TextField
-            label="Price"
+            label="Email"
             fullWidth
-            value={data.price || ''}
-            onChange={(e) => setData({ ...data, price: e.target.value })}
+            value={data.email || ''}
+            onChange={(e) => setData({ ...data, email: e.target.value })}
         />
     </Box>
 )};
 
-export default function ServicesTable() {
+export default function CustomersTable() {
 
 //#region   UseStates...
-  const [services, setServices]   = useState([]); 
+  const [customers, setCustomers] = useState([]);
 
-  const [expandedRows, setExpandedRows] = useState(new Set());
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editingService, setEditingService] = useState(null);
+  
   const [expanded, setExpanded] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [newService, setNewService] = useState({
-    serviceName: "",
-    price: 0
+
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [newCustomer, setNewCustomer] = useState({
+    companyName: "",
+    email: ""
   });
 //#endregion
+
+  //#region   Local Variables
+
+  const theme = useTheme();
+  const isTabletScreen = useMediaQuery(theme.breakpoints.down("md"))
+  const isDesktopScreen = useMediaQuery(theme.breakpoints.down("lg"))
+  const isXlScreen = useMediaQuery(theme.breakpoints.down("xl"))
+  //#endregion
 
 //#region   Data Fetching Functions
   useEffect(() => {
     async function fetchData() {
       try {
-        const serviceResponse = await tryCallApiAsync('GET', 'services')
+        const customerRespons = await tryCallApiAsync('GET', 'customers')
            
 
-        if (!serviceResponse.success) {
+        if (!customerRespons.success) {
           throw new Error('One or more API calls failed');
         }
         
-        setServices(serviceResponse.data);
+        setCustomers(customerRespons.data);
         
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -94,25 +107,16 @@ export default function ServicesTable() {
 
     }, []);
 
-  async function fetchStatuses()
+  async function fetchCustomers()
   {
-    const serviceResponse = await tryCallApiAsync('GET', 'services')
-    if (!serviceResponse.success)
-      throw new Error('Fetching Services failed');
-    setServices(serviceResponse.data)
+    const customerResponse = await tryCallApiAsync('GET', 'customers')
+    if (!customerResponse.success)
+      throw new Error('Fetching Customers failed');
+    setCustomers(customerResponse.data)
   }
 //#endregion
  
 //#region   Helper functions
-    const toggleRow = (serviceId) => {
-        const newExpandedRows = new Set(expandedRows);
-        if (newExpandedRows.has(serviceId)) {
-            newExpandedRows.delete(serviceId);
-        } else {
-            newExpandedRows.add(serviceId);
-        }
-        setExpandedRows(newExpandedRows);
-    };
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -121,30 +125,30 @@ export default function ServicesTable() {
 //#endregion
 
 //#region     CRUD Functions
-  const handleAddService = async () => {
-    const serviceToAdd = {
-      ...newService
+  const handleAddCustomers = async () => {
+    const customerToAdd = {
+      ...newCustomer
     };
 
-    console.log(`handleAddservice Adding: ${serviceToAdd.serviceName}`)
+    console.log(`handleAddCustomers Adding: ${customerToAdd.companyName}`)
 
-    //const response = await tryCallApiAsync('POST', 'projects', null, projectToAdd);
+    const response = await tryCallApiAsync('POST', 'customers', null, customerToAdd);
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
+    if (!response.success) {
+      throw new Error('Failed to create customer');
+    }
 
-    //fetchStatuses();
+    fetchCustomers();
     setOpenAddDialog(false);
-    setNewService({
-        serviceName: "",
-        price: 0
+    setNewCustomer({
+        companyName: "",
+        email: "",
     });
   };
 
-  const handleDeleteService = async (serviceId) => {
+  const handleDeleteCustomer = async (customerId) => {
 
-    console.log(`handleDeleteService Deleting: ${serviceId}`)
+    console.log(`handleDeleteCustomer Deleting: ${customerId}`)
 
 
     // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
@@ -155,19 +159,19 @@ export default function ServicesTable() {
     // fetchStatuses();
   };
 
-  const handleEditService = (service) => {
-    setEditingService({
-      ...service
+  const handleEditCustomer = (customer) => {
+    setEditingCustomer({
+      ...customer
     });
     setOpenEditDialog(true);
   };
 
-  const handleUpdateService = async () => {
-    const updatedService = {
-      ...editingService
+  const handleUpdateCustomer = async () => {
+    const updatedCustomer = {
+      ...editingCustomer
     };
 
-    console.log(`handleUpdateStatus Updating: ${updatedStatus.statusName}`)
+    console.log(`handleUpdateCustomer Updating: ${updatedCustomer.companyName}`)
 
     // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
 
@@ -177,7 +181,7 @@ export default function ServicesTable() {
 
     // fetchStatuses();
     setOpenEditDialog(false);
-    setEditingService(null);
+    setEditingCustomer(null);
   };
   //#endregion
 
@@ -197,13 +201,14 @@ export default function ServicesTable() {
                 {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
         </IconButton>
 
-          <Typography variant="h5">Services</Typography>
+          <Typography variant="h5">Customers</Typography>
+
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
           >
-            Add Status
+            Add Customer
           </Button>
         </Box>
 
@@ -212,24 +217,24 @@ export default function ServicesTable() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Price</TableCell>
+              {!isTabletScreen && <TableCell>Id</TableCell>}
+                <TableCell>Company Name</TableCell>
+                <TableCell>Email</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {services.map((service) => (
-                <React.Fragment key={service.id}>
+              {customers.map((customer) => (
+                <React.Fragment key={customer.id}>
                   <TableRow>
-                    <TableCell>{service.id}</TableCell>
-                    <TableCell>{service.serviceName}</TableCell>
-                    <TableCell>{service.price}</TableCell>
+                  {!isTabletScreen && <TableCell>{customer.id}</TableCell>}
+                    <TableCell>{customer.companyName}</TableCell>
+                    <TableCell>{customer.email}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => handleEditService(service)} color="primary">
+                      <IconButton onClick={() => handleEditCustomer(customer)} color="primary">
                         <EditIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteService(service.id)} color="error">
+                      <IconButton onClick={() => handleDeleteCustomer(customer.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -242,26 +247,32 @@ export default function ServicesTable() {
         </Collapse>
 
         <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Add New Service</DialogTitle>
+          <DialogTitle>Add New Customer</DialogTitle>
           <DialogContent>
-            <ServiceForm data={newService} setData={setNewService} />
+            <CustomerForm 
+                data={newCustomer} 
+                setData={setNewCustomer} 
+                customers={customers}/>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
-            <Button onClick={handleAddService} variant="contained">Add Service</Button>
+            <Button onClick={handleAddCustomers} variant="contained">Add Customer</Button>
           </DialogActions>
         </Dialog>
 
         <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Edit Service</DialogTitle>
+          <DialogTitle>Edit Customer</DialogTitle>
           <DialogContent>
-            {editingService && (
-              <ServiceForm data={editingService} setData={setEditingService} />
+            {editingCustomer && (
+              <CustomerForm 
+                data={editingCustomer} 
+                setData={setEditingCustomer} 
+                customers={customers}/>
             )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-            <Button onClick={handleUpdateService} variant="contained">Update Service</Button>
+            <Button onClick={handleUpdateCustomer} variant="contained">Update Customer</Button>
           </DialogActions>
         </Dialog>
       </Box>

@@ -19,6 +19,7 @@ import {
   useMediaQuery,
   useTheme,
   TextField,
+  Collapse,
 } from '@mui/material';
 
 import {
@@ -57,6 +58,7 @@ export default function StatusesTable() {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editingStatus, setEditingStatus] = useState(null);
+  const [expanded, setExpanded] = useState(false)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [newStatus, setNewStatus] = useState({
     stausName: ""
@@ -95,14 +97,9 @@ export default function StatusesTable() {
 //#endregion
  
 //#region   Helper functions
-    const toggleRow = (statusId) => {
-        const newExpandedRows = new Set(expandedRows);
-        if (newExpandedRows.has(statusId)) {
-            newExpandedRows.delete(statusId);
-        } else {
-            newExpandedRows.add(statusId);
-        }
-        setExpandedRows(newExpandedRows);
+
+    const handleExpandClick = () => {
+      setExpanded(!expanded);
     };
 
 //#endregion
@@ -171,8 +168,19 @@ export default function StatusesTable() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h4">Statuses</Typography>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center', 
+          mb: 1 }}>
+
+          <IconButton 
+              onClick={handleExpandClick}
+              sx={{ ml: 1, color: 'white' }}>
+                  {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
+          </IconButton>
+
+          <Typography variant="h5">Statuses</Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
@@ -182,6 +190,7 @@ export default function StatusesTable() {
           </Button>
         </Box>
 
+        <Collapse in={expanded}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -211,6 +220,7 @@ export default function StatusesTable() {
             </TableBody>
           </Table>
         </TableContainer>
+        </Collapse>
 
         <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add New Status</DialogTitle>
