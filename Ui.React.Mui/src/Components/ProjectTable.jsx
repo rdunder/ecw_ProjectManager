@@ -283,6 +283,8 @@ const ProjectTable = () => {
           <Typography>{customers.find(c => c.id === project.customerId).contactPerson.email}</Typography>
           <Typography>{customers.find(c => c.id === project.customerId).contactPerson.phoneNumber}</Typography>
         </Grid2>
+
+        
         
         <Grid2 size={{ xs: 12, sm: 4 }}>
           <Typography><strong>Project Manager:</strong></Typography>

@@ -10,5 +10,5 @@ public class Customer
     
     public string Email { get; set; } = null!;
 
-    public ContactPerson? ContactPerson { get; set; }
+    public IEnumerable<ContactPerson>? ContactPersons { get; set; }
 }

@@ -14,7 +14,7 @@ public class CustomerEntity
     
     
 
-    public ContactPersonEntity? ContactPerson { get; set; }
-    
+    // public ContactPersonEntity? ContactPerson { get; set; }
+    public ICollection<ContactPersonEntity> ContactPersons { get; set; } = new List<ContactPersonEntity>();
     public ICollection<ProjectEntity> Projects { get; set; } = new List<ProjectEntity>();
 }

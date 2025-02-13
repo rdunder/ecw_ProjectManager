@@ -13,7 +13,9 @@ public class CustomerRepository(SqlDataContext context) :
     {
         try
         {
-            var entities = await _context.Customers.Include(x => x.ContactPerson).ToListAsync();
+            var entities = await _context.Customers
+                .Include(x => x.ContactPersons)
+                .ToListAsync();
             return entities;
         }
         catch (Exception e)

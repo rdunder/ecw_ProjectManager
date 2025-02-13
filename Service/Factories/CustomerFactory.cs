@@ -19,17 +19,20 @@ public static class CustomerFactory
 
     public static Customer Create(CustomerEntity entity)
     {
-        var contactPerson = new ContactPerson();
+        List<ContactPerson> contactPersons = new();
             
-        if (entity.ContactPerson != null)
-            contactPerson = ContactPersonFactory.Create(entity.ContactPerson);
+        if (entity.ContactPersons != null)
+            foreach (var contact in entity.ContactPersons)
+            {
+                contactPersons.Add(ContactPersonFactory.Create(contact));
+            }
             
         var customer = new Customer
         {
             Id = entity.Id,
             CompanyName = entity.CompanyName,
             Email = entity.Email,
-            ContactPerson = contactPerson
+            ContactPersons = contactPersons
         };
         
         return customer;
