@@ -57,6 +57,7 @@ const ServiceForm = ({ data, setData }) => {
 
 export default function ServicesTable() {
 
+
 //#region   UseStates...
   const [services, setServices]   = useState([]); 
 
@@ -70,6 +71,13 @@ export default function ServicesTable() {
     serviceName: "",
     price: 0
   });
+//#endregion
+
+//#region   Loacl Variables
+  const theme = useTheme();
+  const isTabletScreen = useMediaQuery(theme.breakpoints.down("md"))
+  const isDesktopScreen = useMediaQuery(theme.breakpoints.down("lg"))
+  const isXlScreen = useMediaQuery(theme.breakpoints.down("xl"))
 //#endregion
 
 //#region   Data Fetching Functions
@@ -94,7 +102,7 @@ export default function ServicesTable() {
 
     }, []);
 
-  async function fetchStatuses()
+  async function fetchServices()
   {
     const serviceResponse = await tryCallApiAsync('GET', 'services')
     if (!serviceResponse.success)
@@ -128,13 +136,14 @@ export default function ServicesTable() {
 
     console.log(`handleAddservice Adding: ${serviceToAdd.serviceName}`)
 
-    //const response = await tryCallApiAsync('POST', 'projects', null, projectToAdd);
+    const res = await tryCallApiAsync("POST", "services", null, serviceToAdd)
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
+    if (!res.success)
+    {
+      throw new Error("failed to add new service")
+    }
 
-    //fetchStatuses();
+    fetchServices();
     setOpenAddDialog(false);
     setNewService({
         serviceName: "",
@@ -146,13 +155,12 @@ export default function ServicesTable() {
 
     console.log(`handleDeleteService Deleting: ${serviceId}`)
 
+    const res = await tryCallApiAsync("DELETE", "services", serviceId)
 
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
+    if (!res.success)
+      throw new Error("Failed to delete Service")
 
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchServices();
   };
 
   const handleEditService = (service) => {
@@ -167,15 +175,14 @@ export default function ServicesTable() {
       ...editingService
     };
 
-    console.log(`handleUpdateStatus Updating: ${updatedStatus.statusName}`)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    const res = await tryCallApiAsync("PUT", "services", editingService.id, updatedService)
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
+    if (!res.success) {
+      throw new Error("failed to update service")
+    }
 
-    // fetchStatuses();
+    fetchServices();
     setOpenEditDialog(false);
     setEditingService(null);
   };
@@ -185,11 +192,12 @@ export default function ServicesTable() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ p: 3 }}>
-        <Box sx={{ 
+        <Box sx={{            
             display: 'flex', 
             justifyContent: 'space-between',
             alignItems: 'center',
-            mb: 1 }}>
+            mb: 1            
+          }}>
 
         <IconButton 
             onClick={handleExpandClick}
@@ -197,13 +205,36 @@ export default function ServicesTable() {
                 {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
         </IconButton>
 
-          <Typography variant="h5">Services</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+            fontSize: {
+              xs: '15px',
+              sm: '16px',
+              md: '18px',
+              lg: '20px',
+              xl: '22px'
+            } }} 
+            >
+            Services
+          </Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
-          >
-            Add Status
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}>
+            Add Service
           </Button>
         </Box>
 

@@ -73,7 +73,7 @@ const EmployeeForm = ({ data, setData, roles }) => {
         <Select
           value={data.roleId}
           label="Role"
-          onChange={(e) => setData({ ...data, id: e.target.value })}
+          onChange={(e) => setData({ ...data, roleId: e.target.value })}
         >
           {roles.map(role => (
             <MenuItem key={role.id} value={role.id}>
@@ -143,12 +143,12 @@ export default function EmployeesTable() {
 
     }, []);
 
-  async function fetchContactPersons()
+  async function fetchEmployees()
   {
-    const contactPersonResponse = await tryCallApiAsync('GET', 'contact-persons')
-    if (!contactPersonResponse.success)
-      throw new Error('Fetching Contact Persons failed');
-    setEmployees(contactPersonResponse.data)
+    const EmployeesRespons = await tryCallApiAsync('GET', 'employees')
+    if (!EmployeesRespons.success)
+      throw new Error('Fetching Employees failed');
+    setEmployees(EmployeesRespons.data)
   }
 //#endregion
  
@@ -166,15 +166,12 @@ export default function EmployeesTable() {
       ...newEmployee
     };
 
-    console.log(`handleAddEmployee Adding: ${employeeToAdd.firstName} ${employeeToAdd.lastName}`)
+    const res = await tryCallApiAsync("POST", "employees", null, employeeToAdd)
 
-    //const response = await tryCallApiAsync('POST', 'projects', null, projectToAdd);
-
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    //fetchStatuses();
+    if (!res.success) {
+      throw new Error("failed to add Employee")
+    }
+    fetchEmployees();
     setOpenAddDialog(false);
     setNewEmployee({
         firstName: "",
@@ -185,22 +182,24 @@ export default function EmployeesTable() {
     });
   };
 
-  const handleDeleteContactPerson = async (employeeId) => {
+  const handleDeleteEmployee = async (employeeId) => {
+    const res = await tryCallApiAsync("DELETE", "employees", employeeId)
 
-    console.log(`handleDeleteEmployee Deleting: ${employeeId}`)
+    if (!res.success) {
+      throw new Error("failed to delete employee")
+    }
 
-
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
-
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchEmployees()
   };
 
   const handleEditEmployee = (employee) => {
     setEditingEmployee({
-      ...employee
+      employmentNumber: employee.employmentNumber,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      email: employee.email,
+      phoneNumber: employee.phoneNumber,
+      roleId: employee.role.id
     });
     setOpenEditDialog(true);
   };
@@ -210,15 +209,13 @@ export default function EmployeesTable() {
       ...editingEmployee
     };
 
-    console.log(`handleUpdateEmployee Updating: ${updatedEmployee.firstName}`)
+    const res = await tryCallApiAsync("PUT", "employees", editingEmployee.employmentNumber, updatedEmployee)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    if (!res.success) {
+      throw new Error("failed to update employee")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    // fetchStatuses();
+    fetchEmployees()
     setOpenEditDialog(false);
     setEditingEmployee(null);
   };
@@ -240,12 +237,37 @@ export default function EmployeesTable() {
                 {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
         </IconButton>
 
-          <Typography variant="h5">Employees</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+              fontSize: {
+                xs: '15px',
+                sm: '16px',
+                md: '18px',
+                lg: '20px',
+                xl: '22px'
+              }
+            }}
+            >
+              Employees
+          </Typography>
 
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}
           >
             Add Employee
           </Button>
@@ -277,7 +299,7 @@ export default function EmployeesTable() {
                       <IconButton onClick={() => handleEditEmployee(employee)} color="primary">
                         <EditIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteContactPerson(employee.id)} color="error">
+                      <IconButton onClick={() => handleDeleteEmployee(employee.employmentNumber)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>

@@ -47,8 +47,8 @@ const ContactPersonForm = ({ data, setData, customers }) => {
         <TextField
             label="First Name"
             fullWidth
-            value={data.fistName || ''}
-            onChange={(e) => setData({ ...data, fistName: e.target.value })}
+            value={data.firstName || ''}
+            onChange={(e) => setData({ ...data, firstName: e.target.value })}
         />
         <TextField
             label="Last Name"
@@ -166,12 +166,10 @@ export default function ContactPersonsTable() {
       ...newContactPerson
     };
 
-    console.log(`handleAddContactPerson Adding: ${contactPersonToAdd.firstName}`)
-
     const response = await tryCallApiAsync('POST', 'contact-persons', null, contactPersonToAdd);
 
     if (!response.success) {
-      throw new Error('Failed to create project');
+      throw new Error('Failed to create contact person');
     }
 
     fetchContactPersons();
@@ -186,16 +184,13 @@ export default function ContactPersonsTable() {
   };
 
   const handleDeleteContactPerson = async (contactPersonId) => {
+    const res = await tryCallApiAsync("DELETE", "contact-persons", contactPersonId)
 
-    console.log(`handleDeleteContactPerson Deleting: ${contactPersonId}`)
+    if (!res.success) {
+      throw new Error("failed to delete contact person")
+    }
 
-
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
-
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchContactPersons();
   };
 
   const handleEditContactPerson = (contactPerson) => {
@@ -210,15 +205,13 @@ export default function ContactPersonsTable() {
       ...editingContactPerson
     };
 
-    console.log(`handleUpdateContactPerson Updating: ${updatedContactPerson.firstName}`)
+    const res = await tryCallApiAsync("PUT", "contact-persons", editingContactPerson.id, updatedContactPerson)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    if (!res.success) {
+      throw new Error("failed to update contact person")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    // fetchStatuses();
+    fetchContactPersons();
     setOpenEditDialog(false);
     setEditingContactPerson(null);
   };
@@ -240,12 +233,37 @@ export default function ContactPersonsTable() {
                 {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
         </IconButton>
 
-          <Typography variant="h5">Contact Persons</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+              fontSize: {
+                xs: '15px',
+                sm: '16px',
+                md: '18px',
+                lg: '20px',
+                xl: '22px'
+              }
+            }}
+            >
+              Contact Persons
+          </Typography>
 
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}
           >
             Add Contact Person
           </Button>

@@ -112,15 +112,13 @@ export default function RolesTable() {
       ...newRole
     };
 
-    console.log(`handleAddStatus Adding: ${roleToAdd.roleName}`)
+    const res = await tryCallApiAsync("POST", "roles", null, roleToAdd)
 
-    //const response = await tryCallApiAsync('POST', 'projects', null, projectToAdd);
+    if (!res.success) {
+      throw new Error("failed to add role")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    //fetchStatuses();
+    fetchRoles();
     setOpenAddDialog(false);
     setNewRole({
       roleName: ""
@@ -128,16 +126,13 @@ export default function RolesTable() {
   };
 
   const handleDeleteRole = async (roleId) => {
+    const res = await tryCallApiAsync("DELETE", "roles", roleId)
 
-    console.log(`handleDeleteRole Deleting: ${roleId}`)
+    if (!res.success) {
+      throw new Error("failed to delete role")
+    }
 
-
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
-
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchRoles();
   };
 
   const handleEditRole = (role) => {
@@ -152,15 +147,13 @@ export default function RolesTable() {
       ...editingRole
     };
 
-    console.log(`handleUpdateRole Updating: ${updatedRole.roleName}`)
+    const res = await tryCallApiAsync("PUT", "roles", editingRole.id, updatedRole)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    if (!res.success) {
+      throw new Error("failed to update role")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    // fetchStatuses();
+    fetchRoles()
     setOpenEditDialog(false);
     setEditingRole(null);
   };
@@ -182,11 +175,36 @@ export default function RolesTable() {
                   {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
           </IconButton>
 
-          <Typography variant="h5">Roles</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+              fontSize: {
+                xs: '15px',
+                sm: '16px',
+                md: '18px',
+                lg: '20px',
+                xl: '22px'
+              }
+            }}
+            >
+              Roles
+            </Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}
           >
             Add Role
           </Button>

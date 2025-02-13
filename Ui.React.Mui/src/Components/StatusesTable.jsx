@@ -106,19 +106,17 @@ export default function StatusesTable() {
 
 //#region     CRUD Functions
   const handleAddStatus = async () => {
-    const stausToAdd = {
+    const statusToAdd = {
       ...newStatus
     };
 
-    console.log(`handleAddStatus Adding: ${stausToAdd.statusName}`)
+    const res = await tryCallApiAsync("POST", "statuses", null, statusToAdd)
 
-    //const response = await tryCallApiAsync('POST', 'projects', null, projectToAdd);
+    if (!res.success) {
+      throw new Error("failed to add status")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    //fetchStatuses();
+    fetchStatuses();
     setOpenAddDialog(false);
     setNewStatus({
       stausName: ""
@@ -126,16 +124,13 @@ export default function StatusesTable() {
   };
 
   const handleDeleteStatus = async (statusId) => {
+    const res = await tryCallApiAsync("DELETE", "statuses", statusId)
 
-    console.log(`handleDeleteStatus Deleting: ${statusId}`)
+    if (!res.success) {
+      throw new Error("failed to delete status")
+    }
 
-
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
-
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchStatuses()
   };
 
   const handleEditStatus = (status) => {
@@ -150,15 +145,13 @@ export default function StatusesTable() {
       ...editingStatus
     };
 
-    console.log(`handleUpdateStatus Updating: ${updatedStatus.statusName}`)
+    const res = await tryCallApiAsync("PUT", "statuses", editingStatus.id, updatedStatus)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    if (!res.success) {
+      throw new Error("failed to update status")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    // fetchStatuses();
+    fetchStatuses();
     setOpenEditDialog(false);
     setEditingStatus(null);
   };
@@ -180,11 +173,36 @@ export default function StatusesTable() {
                   {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
           </IconButton>
 
-          <Typography variant="h5">Statuses</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+              fontSize: {
+                xs: '15px',
+                sm: '16px',
+                md: '18px',
+                lg: '20px',
+                xl: '22px'
+              }
+            }}
+            >
+              Statuses
+          </Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}
           >
             Add Status
           </Button>

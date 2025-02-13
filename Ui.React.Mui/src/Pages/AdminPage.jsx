@@ -14,26 +14,36 @@ export default function AdminPage() {
 
 
   return (
-    <>
-    <Breadcrumbs separator=">" color="#1976D2" aria-label="breadcrumb">
-        <Link fontSize={18} underline="hover" color="white" href="/">Home</Link>
-        <Link fontSize={18} underline="hover" color="#81B9F0" href="/admin" >Admin Page</Link>
-    </Breadcrumbs>
+    <Box>
 
-    <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-evenly', 
-        flexDirection: 'column'}}>
+      <Breadcrumbs separator=">" color="#1976D2" aria-label="breadcrumb">
+          <Link fontSize={18} underline="hover" color="white" href="/">Home</Link>
+          <Link fontSize={18} underline="hover" color="#81B9F0" href="/admin" >Admin Page</Link>
+      </Breadcrumbs>
 
-        <ServiceTable />
-        <StatusesTable />
+      <Box 
+        sx={{
+          display: 'flex', 
+          justifyContent: 'center', 
+          mt: 5}}>
 
-        <EmployeesTable />
-        <RolesTable />
+        <Box
+          maxWidth={800}
+          sx={{
+            display: 'flex', 
+            justifyContent: 'space-evenly', 
+            flexDirection: 'column'}}>
 
-        <CustomersTable />
-        <ContactPersonsTable />
-    </Box>        
-    </>
+            <ServiceTable />
+            <StatusesTable />
+
+            <EmployeesTable />
+            <RolesTable />
+
+            <CustomersTable />
+            <ContactPersonsTable />
+        </Box>        
+      </Box>
+    </Box>
   )
 }

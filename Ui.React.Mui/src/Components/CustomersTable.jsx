@@ -130,15 +130,13 @@ export default function CustomersTable() {
       ...newCustomer
     };
 
-    console.log(`handleAddCustomers Adding: ${customerToAdd.companyName}`)
-
     const response = await tryCallApiAsync('POST', 'customers', null, customerToAdd);
 
     if (!response.success) {
       throw new Error('Failed to create customer');
     }
 
-    fetchCustomers();
+    await fetchCustomers();
     setOpenAddDialog(false);
     setNewCustomer({
         companyName: "",
@@ -147,21 +145,20 @@ export default function CustomersTable() {
   };
 
   const handleDeleteCustomer = async (customerId) => {
+    const res = await tryCallApiAsync("DELETE", "customers", customerId)
 
-    console.log(`handleDeleteCustomer Deleting: ${customerId}`)
+    if (!res.success) {
+      throw new Error("failed to delete customer")
+    }
 
-
-    // const response = await tryCallApiAsync('DELETE', 'projects', statusId)
-
-    // if (!response.success)
-    //   throw new Error("Failed to delete Project")
-
-    // fetchStatuses();
+    fetchCustomers();
   };
 
   const handleEditCustomer = (customer) => {
     setEditingCustomer({
-      ...customer
+      id: customer.id,
+      companyName: customer.companyName,
+      email: customer.email
     });
     setOpenEditDialog(true);
   };
@@ -171,15 +168,13 @@ export default function CustomersTable() {
       ...editingCustomer
     };
 
-    console.log(`handleUpdateCustomer Updating: ${updatedCustomer.companyName}`)
+    const res = await tryCallApiAsync("PUT", "customers", editingCustomer.id, updatedCustomer)
 
-    // const response = await tryCallApiAsync('PUT', 'projects', editingStatus.projectId, updatedProject);
+    if (!res.success) {
+      throw new Error("failed to update customer")
+    }
 
-    // if (!response.success) {
-    //   throw new Error('Failed to create project');
-    // }
-
-    // fetchStatuses();
+    fetchCustomers();
     setOpenEditDialog(false);
     setEditingCustomer(null);
   };
@@ -201,12 +196,37 @@ export default function CustomersTable() {
                 {expanded ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
         </IconButton>
 
-          <Typography variant="h5">Customers</Typography>
+          <Typography 
+            variant="h5"
+            sx={{
+              fontSize: {
+                xs: '15px',
+                sm: '16px',
+                md: '18px',
+                lg: '20px',
+                xl: '22px'
+              }
+            }}
+            >
+              Customers
+          </Typography>
 
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpenAddDialog(true)}
+            sx={{
+              fontSize: {
+                xs: '12px',
+                sm: '13px',
+                md: '14px',
+                lg: '14px'
+              },
+              padding: {
+                xs: '6px 12px',
+                sm: '8px 16px',
+              }
+            }}
           >
             Add Customer
           </Button>
