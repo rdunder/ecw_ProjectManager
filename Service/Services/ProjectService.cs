@@ -78,7 +78,7 @@ public class ProjectService(
             var entities = await _projectRepository.GetAllAsync(query =>
                     query
                         .Include(x => x.Status)
-                        .Include(x => x.Customer).ThenInclude(x => x.ContactPerson)
+                        .Include(x => x.Customer).ThenInclude(x => x.ContactPersons)
                         .Include(x => x.Service)
                         .Include(x => x.ProjectManager).ThenInclude(x => x.Role)
                     );
@@ -111,7 +111,7 @@ public class ProjectService(
             var entity = await _projectRepository.GetAsync(x => x.ProjectId == id, query =>
                 query
                     .Include(x => x.Status)
-                    .Include(x => x.Customer).ThenInclude(x => x.ContactPerson)
+                    .Include(x => x.Customer).ThenInclude(x => x.ContactPersons)
                     .Include(x => x.Service)
                     .Include(x => x.ProjectManager).ThenInclude(x => x.Role)
                 );
