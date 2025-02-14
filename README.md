@@ -43,6 +43,13 @@ There is also a way of managing Services, Statuses, Customers and Project Manage
     npm install
     npm run dev    
    ```
+8. Add Options.js to UI.Reac.Mui / src / Helpers with the following content
+    ````Json
+    export const Options = {
+        apiBaseUrl: "<URL to API",
+        apiKey: "<API Key>"
+    }
+   ````
 
 ## Project Structure
 - `Data/`: Data access layer
