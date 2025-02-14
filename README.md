@@ -37,19 +37,21 @@ There is also a way of managing Services, Statuses, Customers and Project Manage
    ```bash
    dotnet ef database update
    ```
-6. Build and run the project
-7. Run React UI
-    ```bash
-    npm install
-    npm run dev    
-   ```
-8. Add Options.js to UI.Reac.Mui / src / Helpers with the following content
+   
+6. Add Options.js to UI.Reac.Mui / src / Helpers with the following content
     ````Javascript
     export const Options = {
         apiBaseUrl: "<URL to API",
         apiKey: "<API Key>"
     }
    ````
+    
+7. Build and run the project
+    ```bash
+    npm install
+    npm run dev    
+   ```
+
 
 ## Project Structure
 - `Data/`: Data access layer
