@@ -20,9 +20,14 @@ There is also a way of managing Services, Statuses, Customers and Project Manage
 3. Update or add default connection string in `appsettings.json`
     ````Json
     {
-      "ConnectionStrings": {
-        "EcwProjectManagerDb": "<Your Connection String Here>"
-      }
+        "ConnectionStrings": {
+            "EcwProjectManagerDb": "<Your Connection String Here>"
+        }
+
+        "ProjectManagerApiKey": {
+            "Key": "<API-KEY>",
+            "IsActive": true
+        }
     }
    ````
     OR
