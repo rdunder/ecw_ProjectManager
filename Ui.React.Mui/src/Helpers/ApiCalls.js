@@ -13,8 +13,8 @@ import { Options } from "./Options";
 async function tryCallApiAsync(method, entity, id = null, object = null) {
     
     const url = id === null 
-        ? `${Options.baseUrl}${entity}` 
-        : `${Options.baseUrl}${entity}/${id}`
+        ? `${Options.apiBaseUrl}${entity}` 
+        : `${Options.apiBaseUrl}${entity}/${id}`
 
     const bodyContent = object === null
         ? null
@@ -23,7 +23,7 @@ async function tryCallApiAsync(method, entity, id = null, object = null) {
     const res = await fetch(url, {
         method: method,
         headers: {
-            'X-API-Key': '484c6f3e-40db-4fae-b225-9562c7d0ca43',
+            'X-API-Key': Options.apiKey,
             'accept': '*/*',
             'content-type': 'application/json'          
         },
