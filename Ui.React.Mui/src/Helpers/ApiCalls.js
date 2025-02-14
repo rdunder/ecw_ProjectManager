@@ -23,8 +23,9 @@ async function tryCallApiAsync(method, entity, id = null, object = null) {
     const res = await fetch(url, {
         method: method,
         headers: {
-          'accept': '*/*',
-          'content-type': 'application/json'
+            'X-API-Key': '484c6f3e-40db-4fae-b225-9562c7d0ca43',
+            'accept': '*/*',
+            'content-type': 'application/json'          
         },
         body: bodyContent
     });

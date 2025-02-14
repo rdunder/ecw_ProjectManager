@@ -135,7 +135,12 @@ const ProjectTable = () => {
   };
 
   const handleEditProject = (project) => {
-    navigate('/projectxp', { state: { projectId: project.projectId }})
+    navigate('/projectxp', { 
+      state: 
+      { 
+        projectId: project.projectId 
+      }
+    })
   };
   //#endregion
 

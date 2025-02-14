@@ -1,4 +1,6 @@
+using System.Net;
 using System.Text.Json.Serialization;
+using Api.Main.Services;
 using Data.Contexts;
 using Data.Interfaces;
 using Data.Repositories;
@@ -38,6 +40,8 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceInfoService, ServiceInfoService>();
 builder.Services.AddScoped<IStatusInfoService, StatusInfoService>();
 
+builder.Services.AddApiKeyAuthentication();
+
 
 
 var app = builder.Build();
@@ -45,11 +49,32 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.UseCors(x => x
+    .SetIsOriginAllowed(origin => 
+    {
+        if (string.IsNullOrEmpty(origin)) return true;
+        
+        var uri = new Uri(origin);
+        return uri.Host == "projectmanager.hajt.se" ||
+               uri.Host == "www.projectmanager.hajt.se" ||
+               uri.Host == "localhost" ||
+               uri.Host == "127.0.0.1" ||
+               uri.Host.StartsWith("192.168.50.");
+    })
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
+// app.UseCors(x => x
+//     .AllowAnyHeader()
+//     .AllowAnyMethod()
+//     .AllowAnyOrigin()
+//     .AllowCredentials());
+
+app.UseMiddleware<ApiKeyMiddleware>();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
