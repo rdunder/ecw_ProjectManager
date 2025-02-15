@@ -1,7 +1,34 @@
---  Use to reset a tables PK (Identity)
---dbcc checkident ('[Customers]', reseed, 0);
+
+--	This SQL script removes all content from all tables and inserts example data for testing
+--
+--
 
 
+--	Delete all rows from tables
+--
+--
+delete from Projects
+delete from Employees
+delete from Customers
+delete from ServiceInfos
+delete from StatusInfos
+delete from Roles
+delete from ContactPersons
+
+--	Reset ID (Identity) to 0 (start from 1)
+--
+--
+dbcc checkident ('[Projects]', reseed, 0)
+dbcc checkident ('[Employees]', reseed, 0)
+dbcc checkident ('[Customers]', reseed, 0)
+dbcc checkident ('[ServiceInfos]', reseed, 0)
+dbcc checkident ('[StatusInfos]', reseed, 0)
+dbcc checkident ('[Roles]', reseed, 0)
+dbcc checkident ('[ContactPersons]', reseed, 0)
+
+--	Insert example data
+--
+--
 insert into Roles(RoleName)
 Values
 ('Intern'),
@@ -9,6 +36,20 @@ Values
 ('Senior'),
 ('Admin'),
 ('Manager');
+
+insert into StatusInfos(StatusName)
+values
+('Pending'),
+('Active'),
+('Closed')
+
+insert into ServiceInfos (ServiceName, Price)
+values
+('Konsulttid', 1200),
+('Utbildning', 5300),
+('Web Rekonstruktion', 3500),
+('Web Konstruktion', 3900),
+('Server Hantering', 4800);
 
 insert into Employees (FirstName, LastName, Email, PhoneNumber, RoleId)
 Values
@@ -20,13 +61,7 @@ Values
 ('Fridolf', 'Drilsson', 'fridolf.drilsson@companydomain.com', '0101002080', 2),
 ('Klara', 'Olsson', 'klara.olsson@companydomain.com', '0101002090', 1);
 
-insert into ServiceInfos (ServiceName, Price)
-values
-('Konsulttid', 1200),
-('Utbildning', 5300),
-('Web Rekonstruktion', 3500),
-('Web Konstruktion', 3900),
-('Server Hantering', 4800);
+
 
 insert into Customers (CompanyName, Email)
 values
@@ -46,4 +81,3 @@ values
 ('Bill', 'Lumbergh', 'bill.lumbergh@initech.com', '0105001010', 4),
 ('Jill', 'Valentine', 'jill.valentine@umbrella.com', '0106001010', 5),
 ('Peter', 'Gregory', 'pegr@hooli.com', '0107001010', 6);
-
