@@ -19,7 +19,8 @@ builder.Services.AddControllers()
 
 builder.Services.AddOpenApi();
 
-var connStr = builder.Configuration.GetConnectionString("EcwProjectManagerDb") ?? throw new NullReferenceException("Connection string is null");
+//var connStr = builder.Configuration.GetConnectionString("EcwProjectManagerDb") ?? throw new NullReferenceException("Connection string is null");
+var connStr = builder.Configuration.GetConnectionString("LocalDb") ?? throw new NullReferenceException("Connection string is null");
 
 builder.Services.AddDbContext<SqlDataContext>(opt =>
     opt.UseSqlServer(connStr));
