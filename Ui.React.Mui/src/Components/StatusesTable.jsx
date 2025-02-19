@@ -49,7 +49,7 @@ const StatusForm = ({ data, setData }) => {
     </Box>
 )};
 
-export default function StatusesTable() {
+export default function StatusesTable({cookies}) {
 
 //#region   UseStates...
   const [statuses, setStatuses]   = useState([]); 
@@ -110,7 +110,7 @@ export default function StatusesTable() {
       ...newStatus
     };
 
-    const res = await tryCallApiAsync("POST", "statuses", null, statusToAdd)
+    const res = await tryCallApiAsync("POST", "statuses", null, statusToAdd, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to add status")
@@ -124,7 +124,7 @@ export default function StatusesTable() {
   };
 
   const handleDeleteStatus = async (statusId) => {
-    const res = await tryCallApiAsync("DELETE", "statuses", statusId)
+    const res = await tryCallApiAsync("DELETE", "statuses", statusId, null, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to delete status")
@@ -145,7 +145,7 @@ export default function StatusesTable() {
       ...editingStatus
     };
 
-    const res = await tryCallApiAsync("PUT", "statuses", editingStatus.id, updatedStatus)
+    const res = await tryCallApiAsync("PUT", "statuses", editingStatus.id, updatedStatus, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update status")

@@ -49,7 +49,7 @@ const RolesForm = ({ data, setData }) => {
     </Box>
 )};
 
-export default function RolesTable() {
+export default function RolesTable({cookies}) {
 
 //#region   UseStates...
   const [roles, setRoles]   = useState([]); 
@@ -112,7 +112,7 @@ export default function RolesTable() {
       ...newRole
     };
 
-    const res = await tryCallApiAsync("POST", "roles", null, roleToAdd)
+    const res = await tryCallApiAsync("POST", "roles", null, roleToAdd, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to add role")
@@ -126,7 +126,7 @@ export default function RolesTable() {
   };
 
   const handleDeleteRole = async (roleId) => {
-    const res = await tryCallApiAsync("DELETE", "roles", roleId)
+    const res = await tryCallApiAsync("DELETE", "roles", roleId, null, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to delete role")
@@ -147,7 +147,7 @@ export default function RolesTable() {
       ...editingRole
     };
 
-    const res = await tryCallApiAsync("PUT", "roles", editingRole.id, updatedRole)
+    const res = await tryCallApiAsync("PUT", "roles", editingRole.id, updatedRole, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update role")

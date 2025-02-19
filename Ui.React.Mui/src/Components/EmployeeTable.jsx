@@ -85,7 +85,7 @@ const EmployeeForm = ({ data, setData, roles }) => {
     </Box>
 )};
 
-export default function EmployeesTable() {
+export default function EmployeesTable({cookies}) {
 
 //#region   UseStates...
   const [employees, setEmployees]   = useState([]);
@@ -166,7 +166,7 @@ export default function EmployeesTable() {
       ...newEmployee
     };
 
-    const res = await tryCallApiAsync("POST", "employees", null, employeeToAdd)
+    const res = await tryCallApiAsync("POST", "employees", null, employeeToAdd, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to add Employee")
@@ -183,7 +183,7 @@ export default function EmployeesTable() {
   };
 
   const handleDeleteEmployee = async (employeeId) => {
-    const res = await tryCallApiAsync("DELETE", "employees", employeeId)
+    const res = await tryCallApiAsync("DELETE", "employees", employeeId, null, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to delete employee")
@@ -209,7 +209,7 @@ export default function EmployeesTable() {
       ...editingEmployee
     };
 
-    const res = await tryCallApiAsync("PUT", "employees", editingEmployee.employmentNumber, updatedEmployee)
+    const res = await tryCallApiAsync("PUT", "employees", editingEmployee.employmentNumber, updatedEmployee, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update employee")

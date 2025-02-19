@@ -85,7 +85,7 @@ const ContactPersonForm = ({ data, setData, customers }) => {
     </Box>
 )};
 
-export default function ContactPersonsTable() {
+export default function ContactPersonsTable({cookies}) {
 
 //#region   UseStates...
   const [contactPersons, setContactPersons]   = useState([]);
@@ -166,7 +166,7 @@ export default function ContactPersonsTable() {
       ...newContactPerson
     };
 
-    const response = await tryCallApiAsync('POST', 'contact-persons', null, contactPersonToAdd);
+    const response = await tryCallApiAsync('POST', 'contact-persons', null, contactPersonToAdd, cookies.accessToken);
 
     if (!response.success) {
       throw new Error('Failed to create contact person');
@@ -184,7 +184,7 @@ export default function ContactPersonsTable() {
   };
 
   const handleDeleteContactPerson = async (contactPersonId) => {
-    const res = await tryCallApiAsync("DELETE", "contact-persons", contactPersonId)
+    const res = await tryCallApiAsync("DELETE", "contact-persons", contactPersonId, null, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to delete contact person")
@@ -205,7 +205,7 @@ export default function ContactPersonsTable() {
       ...editingContactPerson
     };
 
-    const res = await tryCallApiAsync("PUT", "contact-persons", editingContactPerson.id, updatedContactPerson)
+    const res = await tryCallApiAsync("PUT", "contact-persons", editingContactPerson.id, updatedContactPerson, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update contact person")

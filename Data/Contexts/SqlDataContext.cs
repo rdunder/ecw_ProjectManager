@@ -1,11 +1,13 @@
 ﻿
 
 using Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Contexts;
-
-public class SqlDataContext(DbContextOptions options) : DbContext(options)
+//  : DbContext(options)
+public class SqlDataContext(DbContextOptions options) : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }

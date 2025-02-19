@@ -9,7 +9,7 @@ import EmployeesTable from '../Components/EmployeeTable'
 import { Box, Breadcrumbs, Link, Typography } from '@mui/material'
 // import { Link } from 'react-router'
 
-export default function AdminPage() {
+export default function AdminPage({cookies}) {
     
 
 
@@ -34,14 +34,14 @@ export default function AdminPage() {
             justifyContent: 'space-evenly', 
             flexDirection: 'column'}}>
 
-            <ServiceTable />
-            <StatusesTable />
+            <ServiceTable cookies={cookies} />
+            <StatusesTable cookies={cookies} />
 
-            <EmployeesTable />
-            <RolesTable />
+            <EmployeesTable cookies={cookies} />
+            <RolesTable cookies={cookies} />
 
-            <CustomersTable />
-            <ContactPersonsTable />
+            <CustomersTable cookies={cookies} />
+            <ContactPersonsTable cookies={cookies} />
         </Box>        
       </Box>
     </Box>

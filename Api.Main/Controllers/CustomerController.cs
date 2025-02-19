@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Dtos;
@@ -26,6 +27,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IResult> Post([FromBody] CustomerDto dto)
         {
             var result = await customerService.CreateAsync(dto);
@@ -33,6 +35,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IResult> Put(int id, [FromBody] CustomerDto dto)
         {
             var result = await customerService.UpdateAsync(id, dto);
@@ -40,6 +43,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IResult> Delete(int id)
         {
             var result = await customerService.DeleteAsync(id);

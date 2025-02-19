@@ -4,6 +4,7 @@ using Api.Main.Services;
 using Data.Contexts;
 using Data.Interfaces;
 using Data.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Services;
@@ -41,7 +42,17 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceInfoService, ServiceInfoService>();
 builder.Services.AddScoped<IStatusInfoService, StatusInfoService>();
 
-builder.Services.AddApiKeyAuthentication();
+//  If not using any other Auth system, API key is configured, see:
+//  /Services/ApiKeyMiddleware.cs
+//  /Services/ApiKeyServiceExtensions.cs
+//  /Services/ApiKeyValidator.cs
+//builder.Services.AddApiKeyAuthentication();
+
+
+//  Configuration of Auth using Identity with EfCore
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<SqlDataContext>();
 
 
 
@@ -73,7 +84,14 @@ app.UseCors(x => x
 //     .AllowAnyOrigin()
 //     .AllowCredentials());
 
-app.UseMiddleware<ApiKeyMiddleware>();
+//  If not using any other Auth system, API key is configured, see:
+//  /Services/ApiKeyMiddleware.cs
+//  /Services/ApiKeyServiceExtensions.cs
+//  /Services/ApiKeyValidator.cs
+//app.UseMiddleware<ApiKeyMiddleware>();
+
+app.MapIdentityApi<IdentityUser>();
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

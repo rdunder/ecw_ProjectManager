@@ -55,7 +55,7 @@ const ServiceForm = ({ data, setData }) => {
     </Box>
 )};
 
-export default function ServicesTable() {
+export default function ServicesTable({cookies}) {
 
 
 //#region   UseStates...
@@ -136,7 +136,7 @@ export default function ServicesTable() {
 
     console.log(`handleAddservice Adding: ${serviceToAdd.serviceName}`)
 
-    const res = await tryCallApiAsync("POST", "services", null, serviceToAdd)
+    const res = await tryCallApiAsync("POST", "services", null, serviceToAdd, cookies.accessToken)
 
     if (!res.success)
     {
@@ -155,7 +155,7 @@ export default function ServicesTable() {
 
     console.log(`handleDeleteService Deleting: ${serviceId}`)
 
-    const res = await tryCallApiAsync("DELETE", "services", serviceId)
+    const res = await tryCallApiAsync("DELETE", "services", serviceId, null, cookies.accessToken)
 
     if (!res.success)
       throw new Error("Failed to delete Service")
@@ -176,7 +176,7 @@ export default function ServicesTable() {
     };
 
 
-    const res = await tryCallApiAsync("PUT", "services", editingService.id, updatedService)
+    const res = await tryCallApiAsync("PUT", "services", editingService.id, updatedService, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update service")

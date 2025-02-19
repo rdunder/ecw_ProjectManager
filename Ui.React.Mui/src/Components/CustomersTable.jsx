@@ -59,7 +59,7 @@ const CustomerForm = ({ data, setData }) => {
     </Box>
 )};
 
-export default function CustomersTable() {
+export default function CustomersTable({cookies}) {
 
 //#region   UseStates...
   const [customers, setCustomers] = useState([]);
@@ -130,7 +130,7 @@ export default function CustomersTable() {
       ...newCustomer
     };
 
-    const response = await tryCallApiAsync('POST', 'customers', null, customerToAdd);
+    const response = await tryCallApiAsync('POST', 'customers', null, customerToAdd, cookies.accessToken);
 
     if (!response.success) {
       throw new Error('Failed to create customer');
@@ -145,7 +145,7 @@ export default function CustomersTable() {
   };
 
   const handleDeleteCustomer = async (customerId) => {
-    const res = await tryCallApiAsync("DELETE", "customers", customerId)
+    const res = await tryCallApiAsync("DELETE", "customers", customerId, null, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to delete customer")
@@ -168,7 +168,7 @@ export default function CustomersTable() {
       ...editingCustomer
     };
 
-    const res = await tryCallApiAsync("PUT", "customers", editingCustomer.id, updatedCustomer)
+    const res = await tryCallApiAsync("PUT", "customers", editingCustomer.id, updatedCustomer, cookies.accessToken)
 
     if (!res.success) {
       throw new Error("failed to update customer")

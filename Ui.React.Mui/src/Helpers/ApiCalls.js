@@ -10,7 +10,7 @@ import { Options } from "./Options";
  * @param {object} object 
  * @returns true if the response code is 200
  */
-async function tryCallApiAsync(method, entity, id = null, object = null) {
+async function tryCallApiAsync(method, entity, id = null, object = null, accessToken = null) {
     
     const url = id === null 
         ? `${Options.apiBaseUrl}${entity}` 
@@ -23,7 +23,7 @@ async function tryCallApiAsync(method, entity, id = null, object = null) {
     const res = await fetch(url, {
         method: method,
         headers: {
-            'X-API-Key': Options.apiKey,
+            'authorization': `Bearer ${accessToken}`,
             'accept': '*/*',
             'content-type': 'application/json'          
         },

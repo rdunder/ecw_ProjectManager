@@ -1,4 +1,5 @@
 using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Dtos;
@@ -27,6 +28,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IResult> Post([FromBody] RoleDto dto)
         {
             var result = await roleService.CreateAsync(dto);
@@ -34,6 +36,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IResult> Put(int id, [FromBody] RoleDto dto)
         {
             var result = await roleService.UpdateAsync(id, dto);
@@ -41,6 +44,7 @@ namespace Api.Main.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IResult> Delete(int id)
         {
             var result = await roleService.DeleteAsync(id);
